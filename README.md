@@ -11,7 +11,7 @@
 - Event: onPlayerHealthUpdated(player, newHealth)
 - Event: onPlayerJoinRequested(player)
 - Event: onPlayerOxygenUpdated(player, newOxygen)
-- Event: onPlayerRelayVoice(player, walkie, *cancel)
+- Event: onPlayerRelayVoice(player, isWalkie, *cancel)
 - Event: onPlayerSwapSeats(player, vehicle, fromseat, toseat, *cancel)
 - Event: onPlayerTakingItem(player, itemId, *cancel)
 - Event: onPlayerTemperatureUpdated(player, temperature)
