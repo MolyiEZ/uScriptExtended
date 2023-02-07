@@ -134,7 +134,7 @@ namespace uScriptEvents
 		}
 	}
 
-	[ScriptEvent("onPlayerRelayVoice", "player, walkie, *cancel")]
+	[ScriptEvent("onPlayerRelayVoice", "player, isWalkie, *cancel")]
 	public class OnPlayerRelayVoice : ScriptEvent
 	{
 		public override EventInfo EventHook(out object instance)
