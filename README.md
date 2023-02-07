@@ -101,5 +101,5 @@ playerSteam [Class]:
     +name                  [get/set]       : string
 
 vehicle [Class]:
-    enterVehicle(player)
+    +enterVehicle(player)
 ```
