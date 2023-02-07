@@ -1,5 +1,6 @@
 # uScriptEvents
 
+## Events
 Event: onBarricadeBuilded(barricade)
 Event: onBarricadeDamaged(player, barricade, damage, cause, *cancel)
 Event: onBarricadeSalvaged(player, barricade, *cancel)
@@ -29,6 +30,8 @@ Event: onStructureSalvaged(player, structure, *cancel)
 Event: onSiphonVehicleRequest(player, vehicle, amount, *cancel)
 
 Event: onVehicleLockRequest(vehicle, *cancel)
+
+## Class
 
 barricade [Class]:
     +anglex                [get]       : single
