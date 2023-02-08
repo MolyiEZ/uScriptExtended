@@ -1,4 +1,4 @@
-# uScriptEvents [![](https://img.shields.io/github/downloads/MolyiEZ/uScriptExtended/total.svg)](https://github.com/MolyiEZ/uScriptExtended/releases)
+# uScriptExtended [![](https://img.shields.io/github/downloads/MolyiEZ/uScriptExtended/total.svg)](https://github.com/MolyiEZ/uScriptExtended/releases)
 
 ## Documentation
 
