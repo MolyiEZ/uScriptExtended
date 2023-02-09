@@ -7,6 +7,11 @@ Event: onBarricadeBuilded(barricade)
 Event: onBarricadeDamaged(player, barricade, damage, cause, *cancel)
 Event: onBarricadeSalvaged(player, barricade, *cancel)
 
+Event: onDayNightUpdated(isDayTime)
+Event: onMoonUpdated(isFullMoon)
+Event: onRainUpdated(Rain)
+Event: onSnowUpdated(Snow)
+
 Event: onPlayerBleedingUpdated(player, isBleeding)
 Event: onPlayerBrokenUpdated(player, isBroken)
 Event: onPlayerFoodUpdated(player, newFood)
@@ -32,7 +37,11 @@ Event: onStructureSalvaged(player, structure, *cancel)
 
 Event: onSiphonVehicleRequest(player, vehicle, amount, *cancel)
 
+Event: onVehicleCarjack(player, vehicle, force, torque, *cancel)
+Event: onVehicleLockpick(player, vehicle, *cancel)
 Event: onVehicleLockRequest(vehicle, *cancel)
+Event: onVehicleRepair(player, vehicle, totalHealing, *cancel)
+Event: onVehicleTireDamaged(player, vehicle, cause, *cancel)
 
 barricade [Class]:
     +anglex                [get]       : single
@@ -77,6 +86,7 @@ gun [Class]:
 
 item [Class]:
     +consumeable           [get]           : consumeable
+    +description           [get]           : string
     +durability            [get/set]       : uInt16
     +gun                   [get]           : gun
 
@@ -86,6 +96,7 @@ oven [Class]:
 
 player [Class]:
     +salvageTime           [get/set]       : uInt16
+    +stamina               [get/set]       : uInt16
     +temperature           [get]           : string
 
 playerClothing [Class]:
