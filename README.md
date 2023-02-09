@@ -9,8 +9,8 @@ Event: onBarricadeSalvaged(player, barricade, *cancel)
 
 Event: onDayNightUpdated(isDayTime)
 Event: onMoonUpdated(isFullMoon)
-Event: onRainUpdated(Rain)
-Event: onSnowUpdated(Snow)
+Event: onRainUpdated(rain)
+Event: onSnowUpdated(snow)
 
 Event: onPlayerBleedingUpdated(player, isBleeding)
 Event: onPlayerBrokenUpdated(player, isBroken)
