@@ -1,4 +1,5 @@
 ﻿using Rocket.Unturned.Effects;
+using Rocket.Unturned.Player;
 using SDG.Unturned;
 using Steamworks;
 using System;
@@ -83,6 +84,7 @@ namespace uScriptPlayers
 		{
 			if (!(instance.Data is PlayerClass player)) return;
 			player.Player.interact.sendSalvageTimeOverride(time);
+			
 		}
 
 		[ScriptFunction("arrested")]
@@ -108,6 +110,20 @@ namespace uScriptPlayers
 		{
 			if (!(instance.Data is PlayerClass player)) return null;
 			return player.Player.life.temperature.ToString();
+		}
+
+		[ScriptFunction("get_stamina")]
+		public static ushort getStamina([ScriptInstance] ExpressionValue instance)
+		{ 
+			if (!(instance.Data is PlayerClass player)) return 0;
+			return player.Player.life.stamina;
+		}
+
+		[ScriptFunction("set_stamina")]
+		public static void setStamina([ScriptInstance] ExpressionValue instance, float value)
+		{
+			if (!(instance.Data is PlayerClass player)) return;
+			player.Player.life.serverModifyStamina(value);
 		}
 	}
 }

@@ -62,6 +62,46 @@ namespace ModuleEvents
 			{
 				ModuleEvents.onStructureSpawned.Invoke(region, drop);
 			};
+
+			LightingManager.onDayNightUpdated += (bool isDaytime) =>
+			{
+				ModuleEvents.onDayNightUpdated.Invoke(isDaytime);
+			};
+
+			LightingManager.onMoonUpdated += (bool isFullMoon) =>
+			{
+				ModuleEvents.onMoonUpdated.Invoke(isFullMoon);
+			};
+
+			LightingManager.onRainUpdated += (ELightingRain rain) =>
+			{
+				ModuleEvents.onRainUpdated.Invoke(rain);
+			};
+
+			LightingManager.onSnowUpdated += (ELightingSnow snow) =>
+			{
+				ModuleEvents.onSnowUpdated.Invoke(snow);
+			};
+
+			VehicleManager.onVehicleLockpicked += (InteractableVehicle vehicle, Player instigatingPlayer, ref bool allow) =>
+			{
+				ModuleEvents.onVehicleLockpicked.Invoke(vehicle, instigatingPlayer, ref allow);
+			};
+
+			VehicleManager.onDamageTireRequested += (CSteamID instigatorSteamID, InteractableVehicle vehicle, int tireIndex, ref bool shouldAllow, EDamageOrigin damageOrigin) =>
+			{
+				ModuleEvents.onDamageTireRequested.Invoke(instigatorSteamID, vehicle, tireIndex, ref shouldAllow, damageOrigin);
+			};
+
+			VehicleManager.onVehicleCarjacked += (InteractableVehicle vehicle, Player instigatingPlayer, ref bool allow, ref Vector3 force, ref Vector3 torque) =>
+			{
+				ModuleEvents.onVehicleCarjacked.Invoke(vehicle, instigatingPlayer, ref allow, ref force, ref torque);
+			};
+
+			VehicleManager.onRepairVehicleRequested += (CSteamID instigatorSteamID, InteractableVehicle vehicle, ref ushort pendingTotalHealing, ref bool shouldAllow) =>
+			{
+				ModuleEvents.onRepairVehicleRequested.Invoke(instigatorSteamID, vehicle, ref pendingTotalHealing, ref shouldAllow);
+			};
 		}
 
 		public static event DamageBarricadeRequestHandler onDamageBarricade;
@@ -79,6 +119,22 @@ namespace ModuleEvents
 		public static event StructureSpawnedHandler onStructureSpawned;
 
 		public static event DamageStructureRequestHandler onDamageStructure;
+
+		public static event DayNightUpdated onDayNightUpdated;
+
+		public static event MoonUpdated onMoonUpdated;
+
+		public static event RainUpdated onRainUpdated;
+
+		public static event SnowUpdated onSnowUpdated;
+
+		public static event VehicleLockpickedSignature onVehicleLockpicked;
+
+		public static event RepairVehicleRequestHandler onRepairVehicleRequested;
+
+		public static event DamageTireRequestHandler onDamageTireRequested;
+
+		public static event VehicleCarjackedSignature onVehicleCarjacked;
 
 		private static void AddComponent(UnturnedPlayer player)
 		{
@@ -113,6 +169,7 @@ namespace ModuleEvents
 		private void Awake() 
 		{
 			var player = gameObject.transform.GetComponent<Player>();
+
 			player.equipment.onDequipRequested += (PlayerEquipment equipment, ref bool shouldAllow) =>
 				OnDequipRequested?.Invoke(player, equipment, ref shouldAllow);
 
@@ -126,7 +183,7 @@ namespace ModuleEvents
 				OnWaterUpdated?.Invoke(player, newWater);
 
 			player.life.onVirusUpdated += (byte newVirus) =>
-				OnWaterUpdated?.Invoke(player, newVirus);
+				OnVirusUpdated?.Invoke(player, newVirus);
 
 			player.life.onStaminaUpdated += (byte newStamina) =>
 				OnStaminaUpdated?.Invoke(player, newStamina);
@@ -168,5 +225,7 @@ namespace ModuleEvents
 		public delegate void BrokenUpdated(Player player, bool newBroken);
 
 		public delegate void TemperatureUpdated(Player player, EPlayerTemperature newTemperature);
+
+		public delegate void DayUpdated();
 	}
 }

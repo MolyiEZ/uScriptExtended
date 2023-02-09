@@ -262,6 +262,15 @@ namespace uScriptItems
 			return new ConsumeableClass(consumeable);
 		}
 
+		[ScriptFunction("get_description")]
+		public static string getDescription([ScriptInstance] ExpressionValue instance)
+		{
+			if (!(instance.Data is ItemClass item)) return null;
+			ItemAsset itemAsset = (ItemAsset)Assets.find(EAssetType.ITEM, item.Id);
+			if (!(itemAsset != null)) return null;
+			return itemAsset.itemDescription;
+		}
+
 		[ScriptFunction("get_durability")]
 		public static ushort getDurability([ScriptInstance] ExpressionValue instance)
 		{

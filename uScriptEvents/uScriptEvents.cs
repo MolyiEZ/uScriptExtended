@@ -639,4 +639,188 @@ namespace uScriptEvents
 			RunEvent(this, args);
 		}
 	}
+
+	[ScriptEvent("onDayNightUpdated", "isDayTime")]
+	public class OnDayNightUpdated : ScriptEvent
+	{
+		public override EventInfo EventHook(out object instance)
+		{
+			instance = null;
+			return typeof(ModuleEvents.ModuleEvents).GetEvent("onDayNightUpdated", BindingFlags.Public | BindingFlags.Static);
+		}
+
+		[ScriptEventSubscription]
+		public void onDayNight(bool isDaytime)
+		{
+			var args = new ExpressionValue[]
+			{
+				isDaytime
+			};
+
+			RunEvent(this, args);
+		}
+	}
+
+	[ScriptEvent("onMoonUpdated", "isFullMoon")]
+	public class OnMoonUpdated : ScriptEvent
+	{
+		public override EventInfo EventHook(out object instance)
+		{
+			instance = null;
+			return typeof(ModuleEvents.ModuleEvents).GetEvent("onMoonUpdated", BindingFlags.Public | BindingFlags.Static);
+		}
+
+		[ScriptEventSubscription]
+		public void OnMoon(bool isFullMoon)
+		{
+			var args = new ExpressionValue[]
+			{
+				isFullMoon
+			};
+
+			RunEvent(this, args);
+		}
+	}
+
+	[ScriptEvent("onRainUpdated", "rain")]
+	public class OnRainUpdated : ScriptEvent
+	{
+		public override EventInfo EventHook(out object instance)
+		{
+			instance = null;
+			return typeof(ModuleEvents.ModuleEvents).GetEvent("onRainUpdated", BindingFlags.Public | BindingFlags.Static);
+		}
+
+		[ScriptEventSubscription]
+		public void OnRain(ELightingRain rain)
+		{
+			var args = new ExpressionValue[]
+			{
+				rain.ToString()
+			};
+
+			RunEvent(this, args);
+		}
+	}
+
+	[ScriptEvent("onSnowUpdated", "rain")]
+	public class OnSnowUpdated : ScriptEvent
+	{
+		public override EventInfo EventHook(out object instance)
+		{
+			instance = null;
+			return typeof(ModuleEvents.ModuleEvents).GetEvent("onSnowUpdated", BindingFlags.Public | BindingFlags.Static);
+		}
+
+		[ScriptEventSubscription]
+		public void OnSnow(ELightingSnow snow)
+		{
+			var args = new ExpressionValue[]
+			{
+				snow.ToString()
+			};
+
+			RunEvent(this, args);
+		}
+	}
+
+	[ScriptEvent("onVehicleLockpick", "player, vehicle, *cancel")]
+	public class onVehicleLockpick : ScriptEvent
+	{
+		public override EventInfo EventHook(out object instance)
+		{
+			instance = null;
+			return typeof(ModuleEvents.ModuleEvents).GetEvent("onVehicleLockpicked", BindingFlags.Public | BindingFlags.Static);
+		}
+
+		[ScriptEventSubscription]
+		public void onVehicleLock(InteractableVehicle vehicle, Player instigatingPlayer, ref bool allow)
+		{
+			var args = new ExpressionValue[]
+			{
+				ExpressionValue.CreateObject(new PlayerClass(instigatingPlayer)),
+				ExpressionValue.CreateObject(new VehicleClass(vehicle)),
+				!allow
+			};
+
+			RunEvent(this, args);
+			allow = !args[2];
+		}
+	}
+
+	[ScriptEvent("onVehicleRepair", "player, vehicle, totalHealing, *cancel")]
+	public class OnVehicleRepair : ScriptEvent
+	{
+		public override EventInfo EventHook(out object instance)
+		{
+			instance = null;
+			return typeof(ModuleEvents.ModuleEvents).GetEvent("onRepairVehicleRequested", BindingFlags.Public | BindingFlags.Static);
+		}
+
+		[ScriptEventSubscription]
+		public void onVehicleRep(CSteamID instigatorSteamID, InteractableVehicle vehicle, ref ushort pendingTotalHealing, ref bool shouldAllow)
+		{
+			var args = new ExpressionValue[]
+			{
+				ExpressionValue.CreateObject(new PlayerClass(PlayerTool.getPlayer(instigatorSteamID))),
+				ExpressionValue.CreateObject(new VehicleClass(vehicle)),
+				(double)pendingTotalHealing,
+				!shouldAllow
+			};
+
+			RunEvent(this, args);
+			shouldAllow = !args[3];
+		}
+	}
+
+	[ScriptEvent("onVehicleCarjack", "player, vehicle, force, torque, *cancel")]
+	public class OnVehicleCarjack : ScriptEvent
+	{
+		public override EventInfo EventHook(out object instance)
+		{
+			instance = null;
+			return typeof(ModuleEvents.ModuleEvents).GetEvent("onVehicleCarjacked", BindingFlags.Public | BindingFlags.Static);
+		}
+
+		[ScriptEventSubscription]
+		public void OnVehicleCar(InteractableVehicle vehicle, Player instigatingPlayer, ref bool allow, ref Vector3 force, ref Vector3 torque)
+		{
+			var args = new ExpressionValue[]
+			{
+				ExpressionValue.CreateObject(new PlayerClass(instigatingPlayer)),
+				ExpressionValue.CreateObject(new VehicleClass(vehicle)),
+				ExpressionValue.CreateObject(new Vector3Class(force)),
+				ExpressionValue.CreateObject(new Vector3Class(torque)),
+				!allow
+			};
+
+			RunEvent(this, args);
+			allow = !args[4];
+		}
+	}
+
+	[ScriptEvent("onVehicleTireDamaged", "player, vehicle, cause, *cancel")]
+	public class OnVehicleTireDamaged : ScriptEvent
+	{
+		public override EventInfo EventHook(out object instance)
+		{
+			instance = null;
+			return typeof(ModuleEvents.ModuleEvents).GetEvent("onDamageTireRequested", BindingFlags.Public | BindingFlags.Static);
+		}
+
+		[ScriptEventSubscription]
+		public void OnVehicleTireDam(CSteamID instigatorSteamID, InteractableVehicle vehicle, int tireIndex, ref bool shouldAllow, EDamageOrigin damageOrigin)
+		{
+			var args = new ExpressionValue[]
+			{
+				ExpressionValue.CreateObject(new PlayerClass(PlayerTool.getPlayer(instigatorSteamID))),
+				ExpressionValue.CreateObject(new VehicleClass(vehicle)),
+				damageOrigin.ToString(),
+				!shouldAllow
+			};
+
+			RunEvent(this, args);
+			shouldAllow = !args[3];
+		}
+	}
 }
