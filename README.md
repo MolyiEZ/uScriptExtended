@@ -18,7 +18,9 @@ Event: onPlayerFoodUpdated(player, newFood)
 Event: onPlayerHealthUpdated(player, newHealth)
 Event: onPlayerJoinRequested(playerSteam)
 Event: onPlayerOxygenUpdated(player, newOxygen)
+Event: onPlayerRadiationUpdated(player, isRadiated)
 Event: onPlayerRelayVoice(player, isWalkie, *cancel)
+Event: onPlayerSafetyUpdated(player, isSafe)
 Event: onPlayerStaminaUpdated(player, newStamina)
 Event: onPlayerSwapSeats(player, vehicle, fromseat, toseat, *cancel)
 Event: onPlayerTakingItem(player, itemId, *cancel)
@@ -112,6 +114,9 @@ playerClothing [Class]:
 playerSteam [Class]:
     +id                    [get]           : string            
     +name                  [get/set]       : string
+    
+serverExtended [Class]:
+	+getPlayersInRadius(vector3 position, single radius) : object
 
 vehicle [Class]:
     +enterVehicle(player)
