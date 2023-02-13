@@ -116,7 +116,7 @@ playerSteam [Class]:
     +name                  [get/set]       : string
     
 serverExtended [Class]:
-	+getPlayersInRadius(vector3 position, single radius) : object
+    +getPlayersInRadius(vector3 position, single radius) : object
 
 vehicle [Class]:
     +enterVehicle(player)
