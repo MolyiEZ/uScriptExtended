@@ -95,6 +95,7 @@ oven [Class]:
     +wired                 [get]           : boolean
 
 player [Class]:
+    +key(key)              [get]           : boolean               
     +salvageTime           [get/set]       : uInt16
     +stamina               [get/set]       : uInt16
     +temperature           [get]           : string
