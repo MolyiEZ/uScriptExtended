@@ -1,5 +1,7 @@
 ﻿using ModuleEvents;
+using Rocket.Unturned.Events;
 using Rocket.Unturned.Permissions;
+using Rocket.Unturned.Player;
 using SDG.Unturned;
 using Steamworks;
 using System;
@@ -15,7 +17,6 @@ using uScript.Module.Main;
 using uScript.Module.Main.Classes;
 using uScript.Unturned;
 using static SDG.Unturned.PlayerVoice;
-using static SDG.Unturned.VehicleManager;
 using static uScriptPlayers.Players;
 
 namespace uScriptEvents
@@ -36,27 +37,6 @@ namespace uScriptEvents
 			{
 				ExpressionValue.CreateObject(new PlayerClass(instigatingPlayer)),
 				eventId.ToString()
-			};
-
-			RunEvent(this, args);
-		}
-	}
-
-	[ScriptEvent("onPlayerNPCD", "id")]
-	public class OnPlayerNPCD : ScriptEvent
-	{
-		public override EventInfo EventHook(out object instance)
-		{
-			instance = null;
-			return typeof(NPCEventManager).GetEvent("eventTriggered", BindingFlags.Public | BindingFlags.Static);
-		}
-
-		[ScriptEventSubscription]
-		public void OnPlayerNPD(string id)
-		{
-			var args = new ExpressionValue[]
-			{
-				id.ToString()
 			};
 
 			RunEvent(this, args);
@@ -821,6 +801,72 @@ namespace uScriptEvents
 
 			RunEvent(this, args);
 			shouldAllow = !args[3];
+		}
+	}
+
+	[ScriptEvent("onPlayerPositionUpdated", "player, position")]
+	public class OnPlayerMoved : ScriptEvent
+	{
+		public override EventInfo EventHook(out object instance)
+		{
+			instance = null;
+			return typeof(UnturnedPlayerEvents).GetEvent("OnPlayerUpdatePosition", BindingFlags.Public | BindingFlags.Static);
+		}
+
+		[ScriptEventSubscription]
+		public void OnPlayerMove(UnturnedPlayer player, Vector3 position)
+		{
+			var args = new ExpressionValue[]
+			{
+				ExpressionValue.CreateObject(new PlayerClass(player.Player)),
+				ExpressionValue.CreateObject(new Vector3Class(position))
+			};
+
+			RunEvent(this, args);
+		}
+	}
+
+	[ScriptEvent("onPlayerSafetyUpdated", "player, isSafe")]
+	public class OnPlayerSafetyUpdated : ScriptEvent
+	{
+		public override EventInfo EventHook(out object instance)
+		{
+			instance = null;
+			return typeof(InternalEvents).GetEvent("OnSafetyUpdated", BindingFlags.Public | BindingFlags.Static);
+		}
+
+		[ScriptEventSubscription]
+		public void onPlayerSafety(Player player, bool isSafe)
+		{
+			var args = new ExpressionValue[]
+			{
+				ExpressionValue.CreateObject(new PlayerClass(player)),
+				isSafe
+			};
+
+			RunEvent(this, args);
+		}
+	}
+
+	[ScriptEvent("onPlayerRadiationUpdated", "player, isRadiated")]
+	public class OnPlayerRadiationUpdated : ScriptEvent
+	{
+		public override EventInfo EventHook(out object instance)
+		{
+			instance = null;
+			return typeof(InternalEvents).GetEvent("OnRadiationUpdated", BindingFlags.Public | BindingFlags.Static);
+		}
+
+		[ScriptEventSubscription]
+		public void OnPlayerRadiation(Player player, bool isRadiated)
+		{
+			var args = new ExpressionValue[]
+			{
+				ExpressionValue.CreateObject(new PlayerClass(player)),
+				isRadiated
+			};
+
+			RunEvent(this, args);
 		}
 	}
 }

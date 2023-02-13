@@ -1,6 +1,7 @@
 ﻿using SDG.Unturned;
 using Steamworks; 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -251,6 +252,40 @@ namespace uScriptItems
 			ItemGunAsset gun = item.Item.GetAsset<ItemGunAsset>();
 			if (!(gun != null)) return null;
 			return new GunClass(gun);
+		}
+
+		[ScriptFunction("reloadTime")]
+		public static void reloadTime([ScriptInstance] ExpressionValue instance, string player, ushort time)
+		{
+			if (!(instance.Data is ItemClass item)) return;
+			ItemGunAsset gun = item.Item.GetAsset<ItemGunAsset>();
+			if (!(gun != null)) return;
+
+			ulong parsedPlayerID;
+			bool hasParsedPlayerID = UInt64.TryParse(player, out parsedPlayerID);
+			if (hasParsedPlayerID != true) return;
+
+			Player playerGiven = PlayerTool.getPlayer(new CSteamID(parsedPlayerID));
+			if (playerGiven == null) return;
+
+			gun.reloadTime = (float)time;
+
+			byte itemPage = 0;
+			bool hasFoundItem = false;
+
+			Items[] items = playerGiven.inventory.items;
+			foreach (Items itemsElement in items)
+			{
+				if (itemsElement.containsItem(item.Item))
+				{
+					itemPage = itemsElement.page;
+					hasFoundItem = true;
+					break;
+				}
+			}
+
+			if (hasFoundItem != true) return;
+			playerGiven.equipment.sendUpdateState();
 		}
 
 		[ScriptFunction("get_consumeable")]

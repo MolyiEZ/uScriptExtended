@@ -166,6 +166,10 @@ namespace ModuleEvents
 
 		public static event InternalEvents.TemperatureUpdated OnTemperatureUpdated;
 
+		public static event InternalEvents.SafetyUpdated OnSafetyUpdated;
+
+		public static event InternalEvents.RadiationUpdated OnRadiationUpdated;
+
 		private void Awake() 
 		{
 			var player = gameObject.transform.GetComponent<Player>();
@@ -202,6 +206,12 @@ namespace ModuleEvents
 
 			player.life.onTemperatureUpdated += (EPlayerTemperature newTemperature) =>
 				OnTemperatureUpdated?.Invoke(player, newTemperature);
+
+			player.movement.onSafetyUpdated += (bool isSafe) =>
+				OnSafetyUpdated?.Invoke(player, isSafe);
+
+			player.movement.onRadiationUpdated += (bool isRadiated) =>
+				OnRadiationUpdated?.Invoke(player, isRadiated);
 		}
 
 		public delegate void DequipRequested(Player player, PlayerEquipment equipment, ref bool shouldAllow);
@@ -226,6 +236,8 @@ namespace ModuleEvents
 
 		public delegate void TemperatureUpdated(Player player, EPlayerTemperature newTemperature);
 
-		public delegate void DayUpdated();
+		public delegate void SafetyUpdated(Player player, bool isSafe);
+
+		public delegate void RadiationUpdated(Player player, bool isRadiated);
 	}
 }

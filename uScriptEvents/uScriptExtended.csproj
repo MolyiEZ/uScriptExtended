@@ -37,9 +37,6 @@
     <Reference Include="com.rlabrecque.steamworks.net">
       <HintPath>libs\com.rlabrecque.steamworks.net.dll</HintPath>
     </Reference>
-    <Reference Include="Marketplace.Shared">
-      <HintPath>libs\Marketplace.Shared.dll</HintPath>
-    </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>libs\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -95,6 +92,7 @@
     <Compile Include="uScriptItems.cs" />
     <Compile Include="uScriptEffects.cs" />
     <Compile Include="uScriptBarricades.cs" />
+    <Compile Include="uScriptServer.cs" />
     <Compile Include="uScriptPlayer.cs" />
     <Compile Include="uScriptClothing.cs" />
     <Compile Include="uScriptVehicle.cs" />
