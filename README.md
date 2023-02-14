@@ -12,12 +12,20 @@ Event: onMoonUpdated(isFullMoon)
 Event: onRainUpdated(rain)
 Event: onSnowUpdated(snow)
 
+Event: onGunBarrelChanged(player, item, oldItem, newItem, *cancel)
+Event: onGunGripChanged(player, item, oldItem, newItem, *cancel)
+Event: onGunMagazineChanged(player, item, oldItem, newItem, *cancel)
+Event: onGunSightChanged(player, item, oldItem, newItem, *cancel)
+Event: onGunShooted(player, item)
+Event: onGunTacticalChanged(player, item, oldItem, newItem, *cancel)
+
 Event: onPlayerBleedingUpdated(player, isBleeding)
 Event: onPlayerBrokenUpdated(player, isBroken)
 Event: onPlayerFoodUpdated(player, newFood)
 Event: onPlayerHealthUpdated(player, newHealth)
 Event: onPlayerJoinRequested(playerSteam)
 Event: onPlayerOxygenUpdated(player, newOxygen)
+Event: onPlayerPositionUpdated(player)
 Event: onPlayerRadiationUpdated(player, isRadiated)
 Event: onPlayerRelayVoice(player, isWalkie, *cancel)
 Event: onPlayerSafetyUpdated(player, isSafe)
@@ -45,10 +53,13 @@ Event: onVehicleLockRequest(vehicle, *cancel)
 Event: onVehicleRepair(player, vehicle, totalHealing, *cancel)
 Event: onVehicleTireDamaged(player, vehicle, cause, *cancel)
 
+
+
 barricade [Class]:
     +anglex                [get]       : single
     +angley                [get]       : single
     +anglez                [get]       : single
+    +farm                  [get]       : farm
     +generator             [get]       : generator
     +fire                  [get]       : fire
     +oven                  [get]       : oven
@@ -61,7 +72,13 @@ effectspawn [Class]:
     +effect(string guid, vector3 position)
     +effectPlayer(string guid, vector3 position, player)
     +effectClear(string guid)
- 
+
+farm [Class]:
+	+canFertilize	       [get]		   : boolean
+	+grow 			       [get]		   : ushort
+	+growth			       [get]		   : ushort
+	+isFullyGrown	       [get]		   : boolean
+
 fire [Class]:
     +lit                   [get/set]       : boolean
     +wired                 [get]           : boolean
@@ -97,6 +114,9 @@ oven [Class]:
     +wired                 [get]           : boolean
 
 player [Class]:
+    +isGrounded		       [get]		   : boolean
+	+isSafe			       [get]		   : boolean
+	+isRadiated		       [get]		   : boolean
     +key(key)              [get]           : boolean               
     +salvageTime           [get/set]       : uInt16
     +stamina               [get/set]       : uInt16
