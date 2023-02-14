@@ -1,4 +1,5 @@
-﻿using SDG.Framework.Devkit.Interactable;
+﻿using Rocket.Unturned.Events;
+using SDG.Framework.Devkit.Interactable;
 using SDG.Unturned;
 using Steamworks;
 using System;
@@ -21,7 +22,7 @@ namespace uScriptBarricades
 		[ScriptClass("generator")]
 		public class GeneratorClass
 		{
-			public InteractableGenerator Generator { get; }
+			public InteractableGenerator Generator { get; set; }
 
 			public GeneratorClass(InteractableGenerator generator)
 			{
@@ -72,7 +73,7 @@ namespace uScriptBarricades
 		[ScriptClass("fire")]
 		public class FireClass 
 		{
-			public InteractableFire Fire { get; }
+			public InteractableFire Fire { get; set; }
 
 			public FireClass(InteractableFire fire)
 			{
@@ -105,7 +106,7 @@ namespace uScriptBarricades
 		[ScriptClass("oven")]
 		public class OvenClass
 		{
-			public InteractableOven Oven { get; }
+			public InteractableOven Oven { get; set; }
 
 			public OvenClass(InteractableOven oven)
 			{
@@ -134,6 +135,71 @@ namespace uScriptBarricades
 				}
 			}
 		}
+
+		[ScriptClass("farm")]
+		public class FarmClass
+		{
+			public InteractableFarm Farm { get; set; }
+
+			public FarmClass(InteractableFarm farm)
+			{
+				this.Farm = farm;
+			}
+
+			[ScriptProperty(null)]
+			public BarricadeClass barricade
+			{
+				get
+				{
+					return new BarricadeClass(this.Farm.transform);
+				}
+			}
+
+			[ScriptProperty(null)]
+			public bool isFullyGrown
+			{
+				get
+				{
+					return this.Farm.IsFullyGrown;
+				}
+			}
+
+			[ScriptProperty(null)]
+			public bool canFertilize
+			{
+				get
+				{
+					return this.Farm.canFertilize;
+				}
+			}
+
+			[ScriptProperty(null)]
+			public ushort grow
+			{
+				get
+				{
+					return this.Farm.grow;
+				}
+			}
+
+			[ScriptProperty(null)]
+			public ushort growth
+			{
+				get
+				{
+					return (ushort)this.Farm.growth;
+				}
+			}
+
+			[ScriptProperty(null)]
+			public ushort planted
+			{
+				get
+				{
+					return (ushort)this.Farm.planted;
+				}
+			}
+		}
 	}
 
 	[ScriptTypeExtension(typeof(BarricadeClass))]
@@ -144,10 +210,7 @@ namespace uScriptBarricades
 		{
 			if (!(instance.Data is BarricadeClass barricade)) return null;
 			InteractableGenerator component = barricade.BarricadeTransform.GetComponent<InteractableGenerator>();
-			if (!(component != null))
-			{
-				return null;
-			}
+			if (!(component != null)) return null;
 			return new GeneratorClass(component);
 		}
 
@@ -156,10 +219,7 @@ namespace uScriptBarricades
 		{
 			if (!(instance.Data is BarricadeClass barricade)) return null;
 			InteractableFire component = barricade.BarricadeTransform.GetComponent<InteractableFire>();
-			if (!(component != null))
-			{
-				return null;
-			}
+			if (!(component != null)) return null;
 			return new FireClass(component);
 		}
 
@@ -168,11 +228,17 @@ namespace uScriptBarricades
 		{
 			if (!(instance.Data is BarricadeClass barricade)) return null;
 			InteractableOven component = barricade.BarricadeTransform.GetComponent<InteractableOven>();
-			if (!(component != null))
-			{
-				return null;
-			}
+			if (!(component != null)) return null;
 			return new OvenClass(component);
+		}
+
+		[ScriptFunction("get_farm")]
+		public static FarmClass getFarm([ScriptInstance] ExpressionValue instance)
+		{
+			if (!(instance.Data is BarricadeClass barricade)) return null;
+			InteractableFarm component = barricade.BarricadeTransform.GetComponent<InteractableFarm>();
+			if (!(component != null)) return null;
+			return new FarmClass(component);
 		}
 
 		[ScriptFunction("get_isWired")]

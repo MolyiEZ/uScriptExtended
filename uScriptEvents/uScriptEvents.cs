@@ -17,6 +17,7 @@ using uScript.Module.Main;
 using uScript.Module.Main.Classes;
 using uScript.Unturned;
 using static SDG.Unturned.PlayerVoice;
+using static uScriptBarricades.Generator;
 using static uScriptPlayers.Players;
 
 namespace uScriptEvents
@@ -804,7 +805,7 @@ namespace uScriptEvents
 		}
 	}
 
-	[ScriptEvent("onPlayerPositionUpdated", "player, position")]
+	[ScriptEvent("onPlayerPositionUpdated", "player")]
 	public class OnPlayerMoved : ScriptEvent
 	{
 		public override EventInfo EventHook(out object instance)
@@ -818,8 +819,7 @@ namespace uScriptEvents
 		{
 			var args = new ExpressionValue[]
 			{
-				ExpressionValue.CreateObject(new PlayerClass(player.Player)),
-				ExpressionValue.CreateObject(new Vector3Class(position))
+				ExpressionValue.CreateObject(new PlayerClass(player.Player))
 			};
 
 			RunEvent(this, args);
@@ -867,6 +867,208 @@ namespace uScriptEvents
 			};
 
 			RunEvent(this, args);
+		}
+	}
+
+	[ScriptEvent("onGunShooted", "player, item")]
+	public class OnBulletSpawned : ScriptEvent
+	{
+		public override EventInfo EventHook(out object instance)
+		{
+			instance = null;
+			return typeof(UseableGun).GetEvent("onBulletSpawned", BindingFlags.Public | BindingFlags.Static);
+		}
+
+		[ScriptEventSubscription]
+		public void OnBulletSpawn(UseableGun gun, BulletInfo bullet)
+		{
+			var args = new ExpressionValue[]
+			{
+				ExpressionValue.CreateObject(new PlayerClass(gun.player)),
+				ExpressionValue.CreateObject(new ItemClass(gun.equippedGunAsset.id))
+			};
+
+			RunEvent(this, args);
+		}
+	}
+
+	[ScriptEvent("onGunSightChanged", "player, item, oldItem, newItem, *cancel")]
+	public class OnGunSightChanged : ScriptEvent
+	{
+		public override EventInfo EventHook(out object instance)
+		{
+			instance = null;
+			return typeof(UseableGun).GetEvent("onChangeSightRequested", BindingFlags.Public | BindingFlags.Static);
+		}
+
+		[ScriptEventSubscription]
+		public void OnGunSightChange(PlayerEquipment equipment, UseableGun gun, Item oldItem, ItemJar newItem, ref bool shouldAllow)
+		{
+			ushort newItemN = 0;
+			ushort oldItemN = 0;
+			if (oldItem != null) 
+			{
+				oldItemN = oldItem.id;
+			}
+			if(newItem != null) 
+			{
+				newItemN = newItem.item.id;
+			}
+			var args = new ExpressionValue[]
+			{
+				ExpressionValue.CreateObject(new PlayerClass(equipment.player)),
+				ExpressionValue.CreateObject(new ItemClass(gun.equippedGunAsset.id)),
+				ExpressionValue.CreateObject(new ItemClass(oldItemN)),
+				ExpressionValue.CreateObject(new ItemClass(newItemN)),
+				!shouldAllow
+			};
+
+			RunEvent(this, args);
+			shouldAllow = !args[4];
+		}
+	}
+
+	[ScriptEvent("onGunTacticalChanged", "player, item, oldItem, newItem, *cancel")]
+	public class OnGunTacticalChanged : ScriptEvent
+	{
+		public override EventInfo EventHook(out object instance)
+		{
+			instance = null;
+			return typeof(UseableGun).GetEvent("onChangeTacticalRequested", BindingFlags.Public | BindingFlags.Static);
+		}
+
+		[ScriptEventSubscription]
+		public void OnGunTacticalChange(PlayerEquipment equipment, UseableGun gun, Item oldItem, ItemJar newItem, ref bool shouldAllow)
+		{
+			ushort newItemN = 0;
+			ushort oldItemN = 0;
+			if (oldItem != null)
+			{
+				oldItemN = oldItem.id;
+			}
+			if (newItem != null)
+			{
+				newItemN = newItem.item.id;
+			}
+			var args = new ExpressionValue[]
+			{
+				ExpressionValue.CreateObject(new PlayerClass(equipment.player)),
+				ExpressionValue.CreateObject(new ItemClass(gun.equippedGunAsset.id)),
+				ExpressionValue.CreateObject(new ItemClass(oldItemN)),
+				ExpressionValue.CreateObject(new ItemClass(newItemN)),
+				!shouldAllow
+			};
+
+			RunEvent(this, args);
+			shouldAllow = !args[4];
+		}
+	}
+
+	[ScriptEvent("onGunGripChanged", "player, item, oldItem, newItem, *cancel")]
+	public class OnGunGripChanged : ScriptEvent
+	{
+		public override EventInfo EventHook(out object instance)
+		{
+			instance = null;
+			return typeof(UseableGun).GetEvent("onChangeGripRequested", BindingFlags.Public | BindingFlags.Static);
+		}
+
+		[ScriptEventSubscription]
+		public void OnGunGripChange(PlayerEquipment equipment, UseableGun gun, Item oldItem, ItemJar newItem, ref bool shouldAllow)
+		{
+			ushort newItemN = 0;
+			ushort oldItemN = 0;
+			if (oldItem != null)
+			{
+				oldItemN = oldItem.id;
+			}
+			if (newItem != null)
+			{
+				newItemN = newItem.item.id;
+			}
+			var args = new ExpressionValue[]
+			{
+				ExpressionValue.CreateObject(new PlayerClass(equipment.player)),
+				ExpressionValue.CreateObject(new ItemClass(gun.equippedGunAsset.id)),
+				ExpressionValue.CreateObject(new ItemClass(oldItemN)),
+				ExpressionValue.CreateObject(new ItemClass(newItemN)),
+				!shouldAllow
+			};
+
+			RunEvent(this, args);
+			shouldAllow = !args[4];
+		}
+	}
+
+	[ScriptEvent("onGunBarrelChanged", "player, item, oldItem, newItem, *cancel")]
+	public class OnGunBarrelChanged : ScriptEvent
+	{
+		public override EventInfo EventHook(out object instance)
+		{
+			instance = null;
+			return typeof(UseableGun).GetEvent("onChangeBarrelRequested", BindingFlags.Public | BindingFlags.Static);
+		}
+
+		[ScriptEventSubscription]
+		public void OnGunBarrelChange(PlayerEquipment equipment, UseableGun gun, Item oldItem, ItemJar newItem, ref bool shouldAllow)
+		{
+			ushort newItemN = 0;
+			ushort oldItemN = 0;
+			if (oldItem != null)
+			{
+				oldItemN = oldItem.id;
+			}
+			if (newItem != null)
+			{
+				newItemN = newItem.item.id;
+			}
+			var args = new ExpressionValue[]
+			{
+				ExpressionValue.CreateObject(new PlayerClass(equipment.player)),
+				ExpressionValue.CreateObject(new ItemClass(gun.equippedGunAsset.id)),
+				ExpressionValue.CreateObject(new ItemClass(oldItemN)),
+				ExpressionValue.CreateObject(new ItemClass(newItemN)),
+				!shouldAllow
+			};
+
+			RunEvent(this, args);
+			shouldAllow = !args[4];
+		}
+	}
+
+	[ScriptEvent("onGunMagazineChanged", "player, item, oldItem, newItem, *cancel")]
+	public class OnGunMagazineChanged : ScriptEvent
+	{
+		public override EventInfo EventHook(out object instance)
+		{
+			instance = null;
+			return typeof(UseableGun).GetEvent("onChangeMagazineRequested", BindingFlags.Public | BindingFlags.Static);
+		}
+
+		[ScriptEventSubscription]
+		public void OnGunMagazineChange(PlayerEquipment equipment, UseableGun gun, Item oldItem, ItemJar newItem, ref bool shouldAllow)
+		{
+			ushort newItemN = 0;
+			ushort oldItemN = 0;
+			if (oldItem != null)
+			{
+				oldItemN = oldItem.id;
+			}
+			if (newItem != null)
+			{
+				newItemN = newItem.item.id;
+			}
+			var args = new ExpressionValue[]
+			{
+				ExpressionValue.CreateObject(new PlayerClass(equipment.player)),
+				ExpressionValue.CreateObject(new ItemClass(gun.equippedGunAsset.id)),
+				ExpressionValue.CreateObject(new ItemClass(oldItemN)),
+				ExpressionValue.CreateObject(new ItemClass(newItemN)),
+				!shouldAllow
+			};
+
+			RunEvent(this, args);
+			shouldAllow = !args[4];
 		}
 	}
 }

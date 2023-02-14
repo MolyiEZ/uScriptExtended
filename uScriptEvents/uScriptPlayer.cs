@@ -54,26 +54,6 @@ namespace uScriptPlayers
 				}
 			}
 		}
-
-		[ScriptClass("npc")]
-		public class NpcClass
-		{
-			public InteractableObjectNPC Npc { get; }
-
-			public NpcClass(InteractableObjectNPC npc)
-			{
-				this.Npc = npc;
-			}
-
-			[ScriptProperty(null)]
-			public ushort id
-			{
-				get
-				{
-					return this.Npc.npcAsset.id;
-				}
-			}
-		}
 	}
 
 	[ScriptTypeExtension(typeof(PlayerClass))]
@@ -124,6 +104,27 @@ namespace uScriptPlayers
 		{
 			if (!(instance.Data is PlayerClass player)) return;
 			player.Player.life.serverModifyStamina(value);
+		}
+
+		[ScriptFunction("get_isSafe")]
+		public static bool getSafe([ScriptInstance] ExpressionValue instance)
+		{
+			if (!(instance.Data is PlayerClass player)) return false;
+			return player.Player.movement.isSafe;
+		}
+
+		[ScriptFunction("get_isRadiated")]
+		public static bool getRadiated([ScriptInstance] ExpressionValue instance)
+		{
+			if (!(instance.Data is PlayerClass player)) return false;
+			return player.Player.movement.isRadiated;
+		}
+
+		[ScriptFunction("get_isGrounded")]
+		public static bool getGrounded([ScriptInstance] ExpressionValue instance)
+		{
+			if (!(instance.Data is PlayerClass player)) return false;
+			return player.Player.movement.isGrounded;
 		}
 	}
 }
