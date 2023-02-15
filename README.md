@@ -205,4 +205,9 @@ zombie [Class]:
     +isRadioactive	   [get]	   : boolean
     +id 	 	   [get]	   : ushort
     +maxHealth		   [get]	   : float
+    
+    
+Explanation:
+Ragdoll can be: "NONE", "BRONZE", "SILVER", "GOLD" or "ZERO".
+
 ```
