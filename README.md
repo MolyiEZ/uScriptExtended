@@ -169,8 +169,8 @@ playerClothing [Class]:
     +removeVest()
     
 playerLook [Class]:
-    +getAnimal()	   [get]           : animal
-    +getZombie()	   [get]           : zombie
+    +getAnimal() : animal
+    +getZombie() : zombie
 
 playerSteam [Class]:
     +id                    [get]           : string            
