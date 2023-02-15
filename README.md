@@ -3,6 +3,8 @@
 ## Documentation
 
 ```
+Event: onAnimalDamaged(animal, killer, *cancel, *damage, limb, ragdoll)
+
 Event: onBarricadeBuilded(barricade)
 Event: onBarricadeDamaged(player, barricade, damage, cause, *cancel)
 Event: onBarricadeSalvaged(player, barricade, *cancel)
@@ -12,7 +14,10 @@ Event: onMoonUpdated(isFullMoon)
 Event: onRainUpdated(rain)
 Event: onSnowUpdated(snow)
 
+Event: onFarmHarvest(player, barricade, *cancel)
+
 Event: onGunBarrelChanged(player, item, oldItem, newItem, *cancel)
+Event: onGunBulletHit(player, item, hit, *cancel)
 Event: onGunGripChanged(player, item, oldItem, newItem, *cancel)
 Event: onGunMagazineChanged(player, item, oldItem, newItem, *cancel)
 Event: onGunSightChanged(player, item, oldItem, newItem, *cancel)
@@ -21,6 +26,7 @@ Event: onGunTacticalChanged(player, item, oldItem, newItem, *cancel)
 
 Event: onPlayerBleedingUpdated(player, isBleeding)
 Event: onPlayerBrokenUpdated(player, isBroken)
+Event: onPlayerDamagedCustom(player, killer, *cancel, *damage, cause, limb, ragdoll)
 Event: onPlayerFoodUpdated(player, newFood)
 Event: onPlayerHealthUpdated(player, newHealth)
 Event: onPlayerJoinRequested(playerSteam)
@@ -53,20 +59,37 @@ Event: onVehicleLockRequest(vehicle, *cancel)
 Event: onVehicleRepair(player, vehicle, totalHealing, *cancel)
 Event: onVehicleTireDamaged(player, vehicle, cause, *cancel)
 
+Event: onZombieDamaged(zombie, killer, *cancel, *damage, limb, ragdoll)
 
+
+animal [Class]:
+    +alertPlayer(player)
+    +dropLoot()
+    +kill(string ragdoll)
+    +moveTo(vector3 position)
+    +runFrom(vector3 position)
+    +startle()
+    +health		   [get]	    : float
+    +id 		   [get]	    : ushort
+    +isFleeing		   [get]	    : boolean
+    +isHunting		   [get]	    : boolean
+    +instanceId		   [get]	    : uInt32
+    +position		   [get]	    : vector3
+    +targetPlayer	   [get]	    : player
+    +targetPoint	   [get]	    : vector3
 
 barricade [Class]:
-    +anglex                [get]       : single
-    +angley                [get]       : single
-    +anglez                [get]       : single
-    +farm                  [get]       : farm
-    +generator             [get]       : generator
-    +fire                  [get]       : fire
-    +oven                  [get]       : oven
+    +anglex                [get]	    : single
+    +angley                [get]	    : single
+    +anglez                [get]	    : single
+    +farm                  [get]	    : farm
+    +generator             [get]	    : generator
+    +fire                  [get]	    : fire
+    +oven                  [get]	    : oven
 
 consumeable [Class]:
-    +food                  [get]       : float
-    +water                 [get]       : float
+    +food                  [get]	    : float
+    +water                 [get]	    : float
 
 effectspawn [Class]:
     +effect(string guid, vector3 position)
@@ -74,10 +97,11 @@ effectspawn [Class]:
     +effectClear(string guid)
 
 farm [Class]:
-	+canFertilize	       [get]		   : boolean
-	+grow 			       [get]		   : ushort
-	+growth			       [get]		   : ushort
-	+isFullyGrown	       [get]		   : boolean
+    +canFertilize	   [get]	    : boolean
+    +grow 		   [get]	    : ushort
+    +growth		   [get]	    : ushort
+    +harvestExperience	   [get/set]	    : uInt32
+    +isFullyGrown	   [get]	    : boolean
 
 fire [Class]:
     +lit                   [get/set]       : boolean
@@ -102,6 +126,18 @@ gun [Class]:
     +recoilProne           [get]           : float
     +recoilSprint          [get]           : float
     +reloadTime            [get]           : float
+   
+hit [Class]:
+    +animal 		   [get]           : animal
+    +barricade 		   [get]           : barricade
+    +direction 		   [get]           : vector3
+    +limb 		   [get]           : string
+    +normal 		   [get]           : vector3
+    +point 		   [get]           : vector3
+    +player 		   [get]           : player
+    +type 		   [get]           : string
+    +vehicle 		   [get]           : vehicle
+    +zombie 		   [get]           : zombie
 
 item [Class]:
     +consumeable           [get]           : consumeable
@@ -114,9 +150,10 @@ oven [Class]:
     +wired                 [get]           : boolean
 
 player [Class]:
-    +isGrounded		       [get]		   : boolean
-	+isSafe			       [get]		   : boolean
-	+isRadiated		       [get]		   : boolean
+    +arrestCustom(ushort id, ushort strenght)
+    +isGrounded		   [get]	   : boolean
+    +isSafe		   [get]	   : boolean
+    +isRadiated		   [get]	   : boolean
     +key(key)              [get]           : boolean               
     +salvageTime           [get/set]       : uInt16
     +stamina               [get/set]       : uInt16
@@ -130,14 +167,42 @@ playerClothing [Class]:
     +removePants()
     +removeShirt()
     +removeVest()
+    
+playerLook [Class]:
+    +getAnimal()	   [get]           : animal
+    +getZombie()	   [get]           : zombie
 
 playerSteam [Class]:
     +id                    [get]           : string            
     +name                  [get/set]       : string
     
 serverExtended [Class]:
+    +clearAllAnimals()
+    +getAnimal(ushort instanceId) : animal
+    +getAnimalsInRadius(vector3 position, single radius) : object
     +getPlayersInRadius(vector3 position, single radius) : object
+    +getZombiesInRadius(vector3 position, single radius) : object
 
 vehicle [Class]:
     +enterVehicle(player)
+    
+zombie [Class]:
+    +acid(vector3 direction, vector3 origin)
+    +boulder(vector3 direction, vector3 origin)
+    +breath()
+    +charge()
+    +dropLoot()
+    +throw()
+    +spark(vector3 target)
+    +spit()
+    +stomp()
+    +health 		   [get]	   : float
+    +isBoss		   [get]	   : boolean
+    +isCutesy		   [get]	   : boolean
+    +isHunting		   [get/set]       : boolean
+    +isHyper		   [get]	   : boolean
+    +isMega		   [get]	   : boolean
+    +isRadioactive	   [get]	   : boolean
+    +id 	 	   [get]	   : ushort
+    +maxHealth		   [get]	   : float
 ```
