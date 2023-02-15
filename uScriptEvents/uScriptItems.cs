@@ -240,6 +240,66 @@ namespace uScriptItems
 				}
 			}
 		}
+
+		[ScriptClass("itemN")]
+		public class ItemNClass
+		{
+			public Item Item { get; set; }
+
+			public ItemNClass(Item item)
+			{
+				this.Item = item;
+			}
+
+			[ScriptProperty(null)]
+			public float id
+			{
+				get
+				{
+					return this.Item.id;
+				}
+			}
+
+			[ScriptProperty(null)]
+			public string name
+			{
+				get
+				{
+					return ((ItemAsset)Assets.find(EAssetType.ITEM, Item.id))?.itemName ?? "Unknown";
+				}
+			}
+
+			[ScriptProperty(null)]
+			public string description
+			{
+				get
+				{
+					return ((ItemAsset)Assets.find(EAssetType.ITEM, Item.id))?.itemDescription ?? "Unknown"; 
+				}
+			}
+
+			[ScriptProperty(null)]
+			public byte durability
+			{
+				get
+				{
+					return this.Item.durability;
+				}
+				set
+				{
+					this.Item.durability = value;
+				}
+			}
+
+			[ScriptProperty(null)]
+			public string itemType
+			{
+				get
+				{
+					return this.Item.GetType().ToString();
+				}
+			}
+		}
 	}
 
 	[ScriptTypeExtension(typeof(ItemClass))]
@@ -249,43 +309,9 @@ namespace uScriptItems
 		public static GunClass getGun([ScriptInstance] ExpressionValue instance)
 		{
 			if (!(instance.Data is ItemClass item)) return null;
-			ItemGunAsset gun = item.Item.GetAsset<ItemGunAsset>();
+			ItemGunAsset gun = item.Item.interactableItem.GetComponent<ItemGunAsset>();
 			if (!(gun != null)) return null;
 			return new GunClass(gun);
-		}
-
-		[ScriptFunction("reloadTime")]
-		public static void reloadTime([ScriptInstance] ExpressionValue instance, string player, ushort time)
-		{
-			if (!(instance.Data is ItemClass item)) return;
-			ItemGunAsset gun = item.Item.GetAsset<ItemGunAsset>();
-			if (!(gun != null)) return;
-
-			ulong parsedPlayerID;
-			bool hasParsedPlayerID = UInt64.TryParse(player, out parsedPlayerID);
-			if (hasParsedPlayerID != true) return;
-
-			Player playerGiven = PlayerTool.getPlayer(new CSteamID(parsedPlayerID));
-			if (playerGiven == null) return;
-
-			gun.reloadTime = (float)time;
-
-			byte itemPage = 0;
-			bool hasFoundItem = false;
-
-			Items[] items = playerGiven.inventory.items;
-			foreach (Items itemsElement in items)
-			{
-				if (itemsElement.containsItem(item.Item))
-				{
-					itemPage = itemsElement.page;
-					hasFoundItem = true;
-					break;
-				}
-			}
-
-			if (hasFoundItem != true) return;
-			playerGiven.equipment.sendUpdateState();
 		}
 
 		[ScriptFunction("get_consumeable")]
@@ -301,9 +327,7 @@ namespace uScriptItems
 		public static string getDescription([ScriptInstance] ExpressionValue instance)
 		{
 			if (!(instance.Data is ItemClass item)) return null;
-			ItemAsset itemAsset = (ItemAsset)Assets.find(EAssetType.ITEM, item.Id);
-			if (!(itemAsset != null)) return null;
-			return itemAsset.itemDescription;
+			return ((ItemAsset)Assets.find(EAssetType.ITEM, item.Id))?.itemDescription ?? "Unknown";
 		}
 
 		[ScriptFunction("get_durability")]

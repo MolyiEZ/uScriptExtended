@@ -89,6 +89,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="uScriptZombie.cs" />
+    <Compile Include="uScriptNPC.cs" />
+    <Compile Include="uScriptAnimal.cs" />
     <Compile Include="uScriptItems.cs" />
     <Compile Include="uScriptEffects.cs" />
     <Compile Include="uScriptBarricades.cs" />

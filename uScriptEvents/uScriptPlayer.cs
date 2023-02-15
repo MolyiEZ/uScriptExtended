@@ -14,7 +14,8 @@ using uScript.API.Attributes;
 using uScript.Core;
 using uScript.Module.Main.Classes;
 using uScript.Unturned;
-using static uScriptPlayers.Players;
+using static uScriptEvents.AnimalFunction;
+using static uScriptEvents.ZombieFunction;
 
 namespace uScriptPlayers
 {
@@ -67,12 +68,12 @@ namespace uScriptPlayers
 			
 		}
 
-		[ScriptFunction("arrested")]
-		public static void arrested([ScriptInstance] ExpressionValue instance, PlayerClass playerc, ushort id, ushort strength)
+		[ScriptFunction("arrestCustom")]
+		public static void arrestCustom([ScriptInstance] ExpressionValue instance, ushort id, ushort strength)
 		{
 			if (!(instance.Data is PlayerClass player)) return;
 			player.Player.equipment.dequip();
-			player.Player.animator.captorID = new CSteamID(ulong.Parse(playerc.Id));
+			player.Player.animator.captorID = new CSteamID(ulong.Parse(player.Id));
 			player.Player.animator.captorItem = id;
 			player.Player.animator.captorStrength = strength;
 			player.Player.animator.sendGesture(EPlayerGesture.ARREST_START, true);
@@ -125,6 +126,48 @@ namespace uScriptPlayers
 		{
 			if (!(instance.Data is PlayerClass player)) return false;
 			return player.Player.movement.isGrounded;
+		}
+	}
+
+	[ScriptTypeExtension(typeof(PlayerLookClass))]
+	public class PlayerLookExtension
+	{
+		[ScriptFunction("getAnimal")]
+		public static AnimalClass getAnimal([ScriptInstance] ExpressionValue instance)
+		{
+			if (!(instance.Data is PlayerLookClass player)) return null;
+
+			RaycastHit hit;
+
+			Ray ray = new Ray(player.Player.look.aim.position, player.Player.look.aim.forward);
+
+			Physics.Raycast(ray, out hit, float.PositiveInfinity, RayMasks.AGENT);
+
+			if (!(hit.transform != null)) return null;
+
+			Animal animal = hit.transform.GetComponent<Animal>();
+			if (!(animal != null)) return null;
+
+			return new AnimalClass(animal);
+		}
+
+		[ScriptFunction("getZombie")]
+		public static ZombieClass getZombie([ScriptInstance] ExpressionValue instance)
+		{
+			if (!(instance.Data is PlayerLookClass player)) return null;
+
+			RaycastHit hit;
+
+			Ray ray = new Ray(player.Player.look.aim.position, player.Player.look.aim.forward);
+
+			Physics.Raycast(ray, out hit, float.PositiveInfinity, RayMasks.AGENT);
+
+			if (!(hit.transform != null)) return null;
+
+			Zombie zombie = hit.transform.GetComponent<Zombie>();
+			if (!(zombie != null)) return null;
+
+			return new ZombieClass(zombie);
 		}
 	}
 }

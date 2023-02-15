@@ -1,4 +1,5 @@
-﻿using Rocket.Unturned.Events;
+﻿using Newtonsoft.Json.Linq;
+using Rocket.Unturned.Events;
 using SDG.Framework.Devkit.Interactable;
 using SDG.Unturned;
 using Steamworks;
@@ -14,6 +15,8 @@ using uScript.Core;
 using uScript.Module.Main.Classes;
 using uScript.Unturned;
 using static uScriptBarricades.Generator;
+using static uScriptEvents.AnimalFunction;
+using static uScriptEvents.ZombieFunction;
 
 namespace uScriptBarricades
 {
@@ -136,6 +139,108 @@ namespace uScriptBarricades
 			}
 		}
 
+		[ScriptClass("hit")]
+		public class HitClass
+		{
+			public InputInfo Hit { get; set; }
+
+			public HitClass(InputInfo hit)
+			{
+				this.Hit = hit;
+			}
+
+			[ScriptProperty(null)]
+			public Vector3Class normal
+			{
+				get
+				{
+					return new Vector3Class(this.Hit.normal);
+				}
+			}
+
+			[ScriptProperty(null)]
+			public Vector3Class direction
+			{
+				get
+				{
+					return new Vector3Class(this.Hit.direction);
+				}
+			}
+
+			[ScriptProperty(null)]
+			public Vector3Class point
+			{
+				get
+				{
+					return new Vector3Class(this.Hit.point);
+				}
+			}
+
+			[ScriptProperty(null)]
+			public PlayerClass player
+			{
+				get
+				{
+					return new PlayerClass(this.Hit.player);
+				}
+			}
+
+			[ScriptProperty(null)]
+			public BarricadeClass barricade
+			{
+				get
+				{
+					return new BarricadeClass(this.Hit.transform);
+				}
+			}
+
+			[ScriptProperty(null)]
+			public VehicleClass vehicle
+			{
+				get
+				{
+					return new VehicleClass(this.Hit.vehicle);
+				}
+			}
+
+			[ScriptProperty(null)]
+			public AnimalClass animal
+			{
+				get
+				{
+					return new AnimalClass(this.Hit.animal);
+				}
+			}
+
+			[ScriptProperty(null)]
+			public ZombieClass zombie
+			{
+				get
+				{
+					return new ZombieClass(this.Hit.zombie);
+				}
+			}
+
+			[ScriptProperty(null)]
+			public string limb
+			{
+				get
+				{
+					return this.Hit.limb.ToString();
+				}
+			}
+
+			[ScriptProperty(null)]
+			public string type
+			{
+				get
+				{
+					return this.Hit.type.ToString();
+				}
+			}
+
+		}
+
 		[ScriptClass("farm")]
 		public class FarmClass
 		{
@@ -192,11 +297,15 @@ namespace uScriptBarricades
 			}
 
 			[ScriptProperty(null)]
-			public ushort planted
+			public uint harvestExperience
 			{
 				get
 				{
-					return (ushort)this.Farm.planted;
+					return this.Farm.harvestRewardExperience;
+				}
+				set
+				{
+					this.Farm.harvestRewardExperience = value;
 				}
 			}
 		}

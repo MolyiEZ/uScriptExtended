@@ -15,9 +15,13 @@ using uScript.API.Attributes;
 using uScript.Core;
 using uScript.Module.Main;
 using uScript.Module.Main.Classes;
+using uScript.Module.Main.Events;
 using uScript.Unturned;
 using static SDG.Unturned.PlayerVoice;
 using static uScriptBarricades.Generator;
+using static uScriptEvents.AnimalFunction;
+using static uScriptEvents.ZombieFunction;
+using static uScriptItems.Gun;
 using static uScriptPlayers.Players;
 
 namespace uScriptEvents
@@ -885,7 +889,7 @@ namespace uScriptEvents
 			var args = new ExpressionValue[]
 			{
 				ExpressionValue.CreateObject(new PlayerClass(gun.player)),
-				ExpressionValue.CreateObject(new ItemClass(gun.equippedGunAsset.id))
+				ExpressionValue.CreateObject(new ItemClass(gun.GetComponent<ItemJar>()))
 			};
 
 			RunEvent(this, args);
@@ -904,22 +908,12 @@ namespace uScriptEvents
 		[ScriptEventSubscription]
 		public void OnGunSightChange(PlayerEquipment equipment, UseableGun gun, Item oldItem, ItemJar newItem, ref bool shouldAllow)
 		{
-			ushort newItemN = 0;
-			ushort oldItemN = 0;
-			if (oldItem != null) 
-			{
-				oldItemN = oldItem.id;
-			}
-			if(newItem != null) 
-			{
-				newItemN = newItem.item.id;
-			}
 			var args = new ExpressionValue[]
 			{
 				ExpressionValue.CreateObject(new PlayerClass(equipment.player)),
 				ExpressionValue.CreateObject(new ItemClass(gun.equippedGunAsset.id)),
-				ExpressionValue.CreateObject(new ItemClass(oldItemN)),
-				ExpressionValue.CreateObject(new ItemClass(newItemN)),
+				(oldItem != null) ? ExpressionValue.CreateObject(new ItemNClass(oldItem)) : ExpressionValue.Null,
+				(newItem != null) ? ExpressionValue.CreateObject(new ItemClass(newItem)) : ExpressionValue.Null,
 				!shouldAllow
 			};
 
@@ -940,22 +934,12 @@ namespace uScriptEvents
 		[ScriptEventSubscription]
 		public void OnGunTacticalChange(PlayerEquipment equipment, UseableGun gun, Item oldItem, ItemJar newItem, ref bool shouldAllow)
 		{
-			ushort newItemN = 0;
-			ushort oldItemN = 0;
-			if (oldItem != null)
-			{
-				oldItemN = oldItem.id;
-			}
-			if (newItem != null)
-			{
-				newItemN = newItem.item.id;
-			}
 			var args = new ExpressionValue[]
 			{
 				ExpressionValue.CreateObject(new PlayerClass(equipment.player)),
 				ExpressionValue.CreateObject(new ItemClass(gun.equippedGunAsset.id)),
-				ExpressionValue.CreateObject(new ItemClass(oldItemN)),
-				ExpressionValue.CreateObject(new ItemClass(newItemN)),
+				(oldItem != null) ? ExpressionValue.CreateObject(new ItemNClass(oldItem)) : ExpressionValue.Null,
+				(newItem != null) ? ExpressionValue.CreateObject(new ItemClass(newItem)) : ExpressionValue.Null,
 				!shouldAllow
 			};
 
@@ -976,22 +960,12 @@ namespace uScriptEvents
 		[ScriptEventSubscription]
 		public void OnGunGripChange(PlayerEquipment equipment, UseableGun gun, Item oldItem, ItemJar newItem, ref bool shouldAllow)
 		{
-			ushort newItemN = 0;
-			ushort oldItemN = 0;
-			if (oldItem != null)
-			{
-				oldItemN = oldItem.id;
-			}
-			if (newItem != null)
-			{
-				newItemN = newItem.item.id;
-			}
 			var args = new ExpressionValue[]
 			{
 				ExpressionValue.CreateObject(new PlayerClass(equipment.player)),
 				ExpressionValue.CreateObject(new ItemClass(gun.equippedGunAsset.id)),
-				ExpressionValue.CreateObject(new ItemClass(oldItemN)),
-				ExpressionValue.CreateObject(new ItemClass(newItemN)),
+				(oldItem != null) ? ExpressionValue.CreateObject(new ItemNClass(oldItem)) : ExpressionValue.Null,
+				(newItem != null) ? ExpressionValue.CreateObject(new ItemClass(newItem)) : ExpressionValue.Null,
 				!shouldAllow
 			};
 
@@ -1012,22 +986,12 @@ namespace uScriptEvents
 		[ScriptEventSubscription]
 		public void OnGunBarrelChange(PlayerEquipment equipment, UseableGun gun, Item oldItem, ItemJar newItem, ref bool shouldAllow)
 		{
-			ushort newItemN = 0;
-			ushort oldItemN = 0;
-			if (oldItem != null)
-			{
-				oldItemN = oldItem.id;
-			}
-			if (newItem != null)
-			{
-				newItemN = newItem.item.id;
-			}
 			var args = new ExpressionValue[]
 			{
 				ExpressionValue.CreateObject(new PlayerClass(equipment.player)),
 				ExpressionValue.CreateObject(new ItemClass(gun.equippedGunAsset.id)),
-				ExpressionValue.CreateObject(new ItemClass(oldItemN)),
-				ExpressionValue.CreateObject(new ItemClass(newItemN)),
+				(oldItem != null) ? ExpressionValue.CreateObject(new ItemNClass(oldItem)) : ExpressionValue.Null,
+				(newItem != null) ? ExpressionValue.CreateObject(new ItemClass(newItem)) : ExpressionValue.Null,
 				!shouldAllow
 			};
 
@@ -1048,27 +1012,250 @@ namespace uScriptEvents
 		[ScriptEventSubscription]
 		public void OnGunMagazineChange(PlayerEquipment equipment, UseableGun gun, Item oldItem, ItemJar newItem, ref bool shouldAllow)
 		{
-			ushort newItemN = 0;
-			ushort oldItemN = 0;
-			if (oldItem != null)
-			{
-				oldItemN = oldItem.id;
-			}
-			if (newItem != null)
-			{
-				newItemN = newItem.item.id;
-			}
 			var args = new ExpressionValue[]
 			{
 				ExpressionValue.CreateObject(new PlayerClass(equipment.player)),
 				ExpressionValue.CreateObject(new ItemClass(gun.equippedGunAsset.id)),
-				ExpressionValue.CreateObject(new ItemClass(oldItemN)),
-				ExpressionValue.CreateObject(new ItemClass(newItemN)),
+				(oldItem != null) ? ExpressionValue.CreateObject(new ItemNClass(oldItem)) : ExpressionValue.Null,
+				(newItem != null) ? ExpressionValue.CreateObject(new ItemClass(newItem)) : ExpressionValue.Null,
 				!shouldAllow
 			};
 
 			RunEvent(this, args);
 			shouldAllow = !args[4];
+		}
+	}
+
+	[ScriptEvent("onGunBulletHit", "player, item, hit, *cancel")]
+	public class OnGunBulletHit : ScriptEvent
+	{
+		public override EventInfo EventHook(out object instance)
+		{
+			instance = null;
+			return typeof(UseableGun).GetEvent("onBulletHit", BindingFlags.Public | BindingFlags.Static);
+		}
+
+		[ScriptEventSubscription]
+		public void OnGunBullet(UseableGun gun, BulletInfo bullet, InputInfo hit, ref bool shouldAllow)
+		{
+			var args = new ExpressionValue[]
+			{
+				ExpressionValue.CreateObject(new PlayerClass(gun.player)),
+				ExpressionValue.CreateObject(new ItemClass(gun.equippedGunAsset.id)),
+				ExpressionValue.CreateObject(new HitClass(hit)),
+				!shouldAllow
+			};
+
+			RunEvent(this, args);
+			shouldAllow = !args[3];
+		}
+	}
+
+	[ScriptEvent("onFarmHarvest", "player, barricade, *cancel")]
+	public class OnFarmHarvested : ScriptEvent
+	{
+		public override EventInfo EventHook(out object instance)
+		{
+			instance = null;
+			return typeof(InteractableFarm).GetEvent("OnHarvestRequested_Global", BindingFlags.Public | BindingFlags.Static);
+		}
+
+		[ScriptEventSubscription]
+		public void OnFarmHarvest(InteractableFarm harvestable, SteamPlayer instigatorPlayer, ref bool shouldAllow)
+		{
+			var args = new ExpressionValue[]
+			{
+				ExpressionValue.CreateObject(new PlayerClass(instigatorPlayer.player)),
+				ExpressionValue.CreateObject(new BarricadeClass(harvestable.transform)),
+				!shouldAllow
+			};
+
+			RunEvent(this, args);
+			shouldAllow = !args[2];
+		}
+	}
+
+	[ScriptEvent("onPlayerDamagedCustom", "player, killer, *cancel, *damage, cause, limb, ragdoll")]
+	public class OnPlayerDamagedCustom : ScriptEvent
+	{
+		public override EventInfo EventHook(out object instance)
+		{
+			instance = null;
+			return typeof(DamageTool).GetEvent("damagePlayerRequested", BindingFlags.Public | BindingFlags.Static);
+		}
+
+		[ScriptEventSubscription]
+		public void OnPlayerDamaged(ref DamagePlayerParameters parameters, ref bool shouldAllow)
+		{
+
+			Player player = PlayerTool.getPlayer(parameters.killer);
+			var ragdoll = "NONE";
+
+			var args = new ExpressionValue[]
+			{
+				ExpressionValue.CreateObject(new PlayerClass(parameters.player)),
+				(player != null) ? ExpressionValue.CreateObject(new PlayerClass(player)) : ExpressionValue.Null,
+				!shouldAllow,
+				parameters.damage,
+				parameters.limb.ToString(),
+				parameters.cause.ToString(),
+				ragdoll.ToString()
+			};
+
+			RunEvent(this, args);
+			shouldAllow = !args[2];
+			parameters.damage = (float)(double)args[3];
+			switch (args[6].ToString())
+			{
+				case "NONE":
+					parameters.ragdollEffect = ERagdollEffect.NONE;
+					break;
+
+				case "BRONZE":
+					parameters.ragdollEffect = ERagdollEffect.BRONZE;
+					break;
+
+				case "SILVER":
+					parameters.ragdollEffect = ERagdollEffect.SILVER;
+					break;
+
+				case "GOLD":
+					parameters.ragdollEffect = ERagdollEffect.GOLD;
+					break;
+
+				case "ZERO":
+					parameters.ragdollEffect = ERagdollEffect.ZERO_KELVIN;
+					break;
+
+				default:
+					Console.WriteLine("uScriptExtended module from uScript => Ragdoll must be 'NONE', 'BRONZE', 'GOLD', 'SILVER', or 'ZERO'.", Console.ForegroundColor = ConsoleColor.Red);
+					Console.ResetColor();
+					break;
+			}
+		}
+	}
+
+	[ScriptEvent("onAnimalDamaged", "animal, killer, *cancel, *damage, limb, ragdoll")]
+	public class OnAnimalDamaged : ScriptEvent
+	{
+		public override EventInfo EventHook(out object instance)
+		{
+			instance = null;
+			return typeof(DamageTool).GetEvent("damageAnimalRequested", BindingFlags.Public | BindingFlags.Static);
+		}
+
+		[ScriptEventSubscription]
+		public void OnAnimalDamage(ref DamageAnimalParameters parameters, ref bool shouldAllow)
+		{
+			Player killer = null;
+			if (parameters.instigator is Player player) 
+			{
+				killer = player;
+			}
+			var ragdoll = "NONE";
+
+			var args = new ExpressionValue[]
+			{
+				ExpressionValue.CreateObject(new AnimalClass(parameters.animal)),
+				(killer != null) ? ExpressionValue.CreateObject(new PlayerClass(killer)) : ExpressionValue.Null,
+				!shouldAllow,
+				parameters.damage,
+				parameters.limb.ToString(),
+				ragdoll.ToString()
+			};
+
+			RunEvent(this, args);
+			shouldAllow = !args[2];
+			parameters.damage = (float)(double)args[3];
+			switch (args[5].ToString())
+			{
+				case "NONE":
+					parameters.ragdollEffect = ERagdollEffect.NONE;
+					break;
+
+				case "BRONZE":
+					parameters.ragdollEffect = ERagdollEffect.BRONZE;
+					break;
+
+				case "SILVER":
+					parameters.ragdollEffect = ERagdollEffect.SILVER;
+					break;
+
+				case "GOLD":
+					parameters.ragdollEffect = ERagdollEffect.GOLD;
+					break;
+
+				case "ZERO":
+					parameters.ragdollEffect = ERagdollEffect.ZERO_KELVIN;
+					break;
+
+				default:
+					Console.WriteLine("uScriptExtended module from uScript => Ragdoll must be 'NONE', 'BRONZE', 'GOLD', 'SILVER', or 'ZERO'.", Console.ForegroundColor = ConsoleColor.Red);
+					Console.ResetColor();
+				break;
+			}
+		}
+	}
+
+	[ScriptEvent("onZombieDamaged", "zombie, killer, *cancel, *damage, limb, ragdoll")]
+	public class OnZombieDamaged : ScriptEvent
+	{
+		public override EventInfo EventHook(out object instance)
+		{
+			instance = null;
+			return typeof(DamageTool).GetEvent("damageZombieRequested", BindingFlags.Public | BindingFlags.Static);
+		}
+
+		[ScriptEventSubscription]
+		public void OnZombieDamage(ref DamageZombieParameters parameters, ref bool shouldAllow)
+		{
+			Player killer = null;
+			if (parameters.instigator is Player player)
+			{
+				killer = player;
+			}
+			var ragdoll = "NONE";
+
+			var args = new ExpressionValue[]
+			{
+				ExpressionValue.CreateObject(new ZombieClass(parameters.zombie)),
+				(killer != null) ? ExpressionValue.CreateObject(new PlayerClass(killer)) : ExpressionValue.Null,
+				!shouldAllow,
+				parameters.damage,
+				parameters.limb.ToString(),
+				ragdoll.ToString()
+			};
+
+			RunEvent(this, args);
+			shouldAllow = !args[2];
+			parameters.damage = (float)(double)args[3];
+			switch(args[5].ToString())
+			{
+				case "NONE":
+					parameters.ragdollEffect = ERagdollEffect.NONE;
+				break;
+
+				case "BRONZE":
+					parameters.ragdollEffect = ERagdollEffect.BRONZE;
+				break;
+
+				case "SILVER":
+					parameters.ragdollEffect = ERagdollEffect.SILVER;
+				break;
+
+				case "GOLD":
+					parameters.ragdollEffect = ERagdollEffect.GOLD;
+				break;
+
+				case "ZERO":
+					parameters.ragdollEffect = ERagdollEffect.ZERO_KELVIN;
+				break;
+
+				default:
+					Console.WriteLine("uScriptExtended module from uScript => Ragdoll must be 'NONE', 'BRONZE', 'GOLD', 'SILVER', or 'ZERO'.", Console.ForegroundColor = ConsoleColor.Red);
+					Console.ResetColor();
+				break;
+			}
 		}
 	}
 }
