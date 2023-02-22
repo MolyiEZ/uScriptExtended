@@ -210,4 +210,6 @@ zombie [Class]:
 Explanation:
 Ragdoll can be: "NONE", "BRONZE", "SILVER", "GOLD" or "ZERO".
 
+If something is inside [] means that is optional
+
 ```
