@@ -64,8 +64,7 @@ namespace uScriptPlayers
 		public static void setSalvageTime([ScriptInstance] ExpressionValue instance, float time)
 		{
 			if (!(instance.Data is PlayerClass player)) return;
-			player.Player.interact.sendSalvageTimeOverride(time);
-			
+			player.Player.interact.sendSalvageTimeOverride(time);			
 		}
 
 		[ScriptFunction("arrestCustom")]
@@ -84,6 +83,13 @@ namespace uScriptPlayers
 		{
 			if (!(instance.Data is PlayerClass player)) return false;
 			return player.Player.input.keys[number];
+		}
+
+		[ScriptFunction("get_hasEarpiece")]
+		public static bool getEarpiece([ScriptInstance] ExpressionValue instance, int number)
+		{
+			if (!(instance.Data is PlayerClass player)) return false;
+			return player.Player.voice.hasEarpiece;
 		}
 
 		[ScriptFunction("get_temperature")]
@@ -126,6 +132,20 @@ namespace uScriptPlayers
 		{
 			if (!(instance.Data is PlayerClass player)) return false;
 			return player.Player.movement.isGrounded;
+		}
+
+		[ScriptFunction("get_oxygen")]
+		public static ushort getOxygen([ScriptInstance] ExpressionValue instance)
+		{
+			if (!(instance.Data is PlayerClass player)) return 0;
+			return player.Player.life.oxygen;
+		}
+
+		[ScriptFunction("set_oxygen")]
+		public static void setOxygen([ScriptInstance] ExpressionValue instance, float value)
+		{
+			if (!(instance.Data is PlayerClass player)) return;
+			ReflectionUtil.ReflectionUtil.setValue("_oxygen", (byte)value, player.Player.life);
 		}
 	}
 

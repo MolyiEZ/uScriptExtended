@@ -190,7 +190,9 @@ namespace uScriptBarricades
 			{
 				get
 				{
-					return new BarricadeClass(this.Hit.transform);
+					BarricadeDrop barricadeDrop = BarricadeManager.FindBarricadeByRootTransform(this.Hit.transform);
+					if (!(barricadeDrop != null)) return null;
+					return new BarricadeClass(barricadeDrop.model);
 				}
 			}
 
@@ -353,48 +355,50 @@ namespace uScriptBarricades
 		[ScriptFunction("get_isWired")]
 		public static bool getIsWired([ScriptInstance] ExpressionValue instance)
 		{
-			if (!(instance.Data is BarricadeClass barricade)) return false;
-			InteractablePower component = barricade.BarricadeTransform.GetComponent<InteractablePower>();
-			if (component != null) 
-			{
-				return component.isWired;
-			};
+			if (!(instance.Data is BarricadeClass barricade))
+				return false;
+
+			Vector3 barricadePosition = barricade.BarricadeTransform.position;
+			float maxPowerRange = PowerTool.MAX_POWER_RANGE;
+
 			if (Level.info != null && Level.info.configData != null && Level.info.configData.Has_Global_Electricity)
 			{
 				return true;
 			}
 
-			BarricadeDrop barricadeDrop = BarricadeManager.FindBarricadeByRootTransform(barricade.BarricadeTransform);
-			if (barricadeDrop.interactable != null && barricadeDrop.interactable.isPlant)
+			if (BarricadeManager.FindBarricadeByRootTransform(barricade.BarricadeTransform).interactable?.isPlant == true)
 			{
-				ushort maxValue = ushort.MaxValue;
-				byte b;
-				byte b2;
-				BarricadeRegion barricadeRegion;
-				BarricadeManager.tryGetPlant(barricade.BarricadeTransform.parent, out b, out b2, out maxValue, out barricadeRegion);
-				List<InteractableGenerator> list = PowerTool.checkGenerators(barricade.BarricadeTransform.position, PowerTool.MAX_POWER_RANGE, maxValue);
-				for (int i = 0; i < list.Count; i++)
+				byte x, y;
+				ushort plantIndex;
+				BarricadeRegion plantRegion;
+				BarricadeManager.tryGetPlant(barricade.BarricadeTransform.parent, out x, out y, out plantIndex, out plantRegion);
+
+				List<InteractableGenerator> generators = PowerTool.checkGenerators(barricadePosition, maxPowerRange, plantIndex);
+
+				foreach (InteractableGenerator generator in generators)
 				{
-					InteractableGenerator interactableGenerator = list[i];
-					if (interactableGenerator.isPowered && interactableGenerator.fuel > 0 && (interactableGenerator.transform.position - barricade.BarricadeTransform.position).sqrMagnitude < interactableGenerator.sqrWirerange)
+					if (generator.isPowered && generator.fuel > 0 && (generator.transform.position - barricadePosition).sqrMagnitude < generator.sqrWirerange)
 					{
 						return true;
 					}
 				}
+
 				return false;
 			}
-
-			ushort maxValue2 = ushort.MaxValue;
-			List<InteractableGenerator> list2 = PowerTool.checkGenerators(barricade.BarricadeTransform.position, PowerTool.MAX_POWER_RANGE, maxValue2);
-			for (int i = 0; i < list2.Count; i++)
+			else
 			{
-				InteractableGenerator interactableGenerator = list2[i];
-				if (interactableGenerator.isPowered && interactableGenerator.fuel > 0 && (interactableGenerator.transform.position - barricade.BarricadeTransform.position).sqrMagnitude < interactableGenerator.sqrWirerange)
+				List<InteractableGenerator> generators = PowerTool.checkGenerators(barricadePosition, maxPowerRange, ushort.MaxValue);
+
+				foreach (InteractableGenerator generator in generators)
 				{
-					return true;
+					if (generator.isPowered && generator.fuel > 0 && (generator.transform.position - barricadePosition).sqrMagnitude < generator.sqrWirerange)
+					{
+						return true;
+					}
 				}
+
+				return false;
 			}
-			return false;
 		}
 
 		[ScriptFunction("get_anglex")]

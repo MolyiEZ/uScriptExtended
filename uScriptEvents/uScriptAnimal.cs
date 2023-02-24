@@ -1,4 +1,5 @@
-﻿using SDG.Unturned;
+﻿using Newtonsoft.Json.Linq;
+using SDG.Unturned;
 using Steamworks; 
 using System;
 using System.Collections.Generic;
@@ -17,6 +18,15 @@ namespace uScriptEvents
 {
 	public class AnimalFunction : ScriptModuleBase
 	{
+		public static Dictionary<string, ERagdollEffect> ragdolls = new Dictionary<string, ERagdollEffect>()
+		{
+			{"NONE", ERagdollEffect.NONE},
+			{"BRONZE", ERagdollEffect.BRONZE},
+			{"SILVER", ERagdollEffect.SILVER},
+			{"GOLD", ERagdollEffect.GOLD},
+			{"ZERO", ERagdollEffect.ZERO_KELVIN},
+		};
+
 		[ScriptClass("animal")]
 		public class AnimalClass
 		{
@@ -46,34 +56,30 @@ namespace uScriptEvents
 			}
 
 			[ScriptFunction(null)]
-			public void kill(string ragdoll)
+			public void damage(ushort amount, bool dropLoot = true, string ragdoll = "NONE")
 			{
-				switch(ragdoll)
+				EPlayerKill playerKill;
+				uint xp;
+				if(ragdolls.TryGetValue(ragdoll, out ERagdollEffect ragdollEff))
 				{
-					case "NONE":
-						AnimalManager.sendAnimalDead(this.Animal, this.Animal.transform.position, ERagdollEffect.NONE);
-					break;
+					Animal.askDamage(amount, this.Animal.transform.position, out playerKill, out xp, true, dropLoot, ragdollEff);
+				}
+				else
+				{
+					Rocket.Core.Logging.Logger.LogWarning("uScriptExtended module from uScript => Ragdoll must be 'NONE', 'BRONZE', 'GOLD', 'SILVER', or 'ZERO'.");
+				}
+			}
 
-					case "BRONZE":
-						AnimalManager.sendAnimalDead(this.Animal, this.Animal.transform.position, ERagdollEffect.BRONZE);
-					break;
-
-					case "SILVER":
-						AnimalManager.sendAnimalDead(this.Animal, this.Animal.transform.position, ERagdollEffect.SILVER);
-					break;
-
-					case "GOLD":
-						AnimalManager.sendAnimalDead(this.Animal, this.Animal.transform.position, ERagdollEffect.GOLD);
-					break;
-
-					case "ZERO":
-						AnimalManager.sendAnimalDead(this.Animal, this.Animal.transform.position, ERagdollEffect.ZERO_KELVIN);
-					break;
-
-					default:
-						Console.WriteLine("uScriptExtended module from uScript => Ragdoll must be 'NONE', 'BRONZE', 'GOLD', 'SILVER', or 'ZERO'.", Console.ForegroundColor = ConsoleColor.Red);
-						Console.ResetColor();
-						break;
+			[ScriptFunction(null)]
+			public void kill(string ragdoll = "NONE")
+			{
+				if (ragdolls.TryGetValue(ragdoll, out ERagdollEffect ragdollEff))
+				{
+					AnimalManager.sendAnimalDead(this.Animal, this.Animal.transform.position, ragdollEff);
+				}
+				else
+				{
+					Rocket.Core.Logging.Logger.LogWarning("uScriptExtended module from uScript => Ragdoll must be 'NONE', 'BRONZE', 'GOLD', 'SILVER', or 'ZERO'.");
 				}
 			}
 
@@ -84,11 +90,67 @@ namespace uScriptEvents
 			}
 
 			[ScriptProperty(null)]
+			public bool isAttacking
+			{
+				get
+				{
+					return Convert.ToBoolean(ReflectionUtil.ReflectionUtil.getValue("isAttacking", this.Animal));
+				}
+				set
+				{
+					ReflectionUtil.ReflectionUtil.setValue("isAttacking", value, this.Animal);
+				}
+			}
+
+			[ScriptProperty(null)]
+			public bool isMoving
+			{
+				get
+				{
+					return Convert.ToBoolean(ReflectionUtil.ReflectionUtil.getValue("isMoving", this.Animal));
+				}
+				set
+				{
+					ReflectionUtil.ReflectionUtil.setValue("isMoving", value, this.Animal);
+				}
+			}
+
+			[ScriptProperty(null)]
+			public bool isRunning
+			{
+				get
+				{
+					return Convert.ToBoolean(ReflectionUtil.ReflectionUtil.getValue("isRunning", this.Animal));
+				}
+				set
+				{
+					ReflectionUtil.ReflectionUtil.setValue("isRunning", value, this.Animal);
+				}
+			}
+
+			[ScriptProperty(null)]
+			public bool isWandering
+			{
+				get
+				{
+					return Convert.ToBoolean(ReflectionUtil.ReflectionUtil.getValue("isWandering", this.Animal));
+				}
+				set
+				{
+					ReflectionUtil.ReflectionUtil.setValue("isWandering", value, this.Animal);
+				}
+			}
+
+			[ScriptProperty(null)]
 			public bool isFleeing
 			{
 				get
 				{
 					return this.Animal.isFleeing;
+				}
+				set 
+				{
+					ReflectionUtil.ReflectionUtil.setValue("_isFleeing", value, this.Animal);
 				}
 			}
 
@@ -98,6 +160,10 @@ namespace uScriptEvents
 				get
 				{
 					return this.Animal.isHunting;
+				}
+				set
+				{
+					ReflectionUtil.ReflectionUtil.setValue("isHunting", value, this.Animal);
 				}
 				
 			}
@@ -112,11 +178,15 @@ namespace uScriptEvents
 			}
 
 			[ScriptProperty(null)]
-			public float health
+			public ushort health
 			{
 				get
 				{
-					return this.Animal.GetHealth();
+					return (ushort)this.Animal.GetHealth();
+				}
+				set 
+				{
+					ReflectionUtil.ReflectionUtil.setValue("health", value, this.Animal);
 				}
 			}
 
@@ -153,6 +223,10 @@ namespace uScriptEvents
 				get
 				{
 					return new Vector3Class(this.Animal.transform.position);
+				}
+				set 
+				{
+					this.Animal.transform.position = position.Vector3;
 				}
 			}
 

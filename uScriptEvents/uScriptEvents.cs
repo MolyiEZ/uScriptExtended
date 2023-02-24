@@ -168,7 +168,7 @@ namespace uScriptEvents
 		}
 	}
 
-	[ScriptEvent("onPlayerJoinRequested", "playerSteam")]
+	[ScriptEvent("onPlayerJoinRequested", "playerSteam, rejectionReason")]
 	public class OnPlayerJoinRequested : ScriptEvent
 	{
 		public override EventInfo EventHook(out object instance)
@@ -177,19 +177,75 @@ namespace uScriptEvents
 			return typeof(UnturnedPermissions).GetEvent("OnJoinRequested", BindingFlags.Public | BindingFlags.Static);
 		}
 
+		Dictionary<string, ESteamRejection> rejectionReasons = new Dictionary<string, ESteamRejection>()
+		{
+			{ "SERVER_FULL", ESteamRejection.SERVER_FULL },
+			{ "WRONG_HASH_LEVEL", ESteamRejection.WRONG_HASH_LEVEL },
+			{ "WRONG_HASH_ASSEMBLY", ESteamRejection.WRONG_HASH_ASSEMBLY },
+			{ "WRONG_VERSION", ESteamRejection.WRONG_VERSION },
+			{ "WRONG_PASSWORD", ESteamRejection.WRONG_PASSWORD },
+			{ "NAME_PLAYER_SHORT", ESteamRejection.NAME_PLAYER_SHORT },
+			{ "NAME_PLAYER_LONG", ESteamRejection.NAME_PLAYER_LONG },
+			{ "NAME_PLAYER_INVALID", ESteamRejection.NAME_PLAYER_INVALID },
+			{ "NAME_PLAYER_NUMBER", ESteamRejection.NAME_PLAYER_NUMBER },
+			{ "NAME_CHARACTER_SHORT", ESteamRejection.NAME_CHARACTER_SHORT },
+			{ "NAME_CHARACTER_LONG", ESteamRejection.NAME_CHARACTER_LONG },
+			{ "NAME_CHARACTER_INVALID", ESteamRejection.NAME_CHARACTER_INVALID },
+			{ "NAME_CHARACTER_NUMBER", ESteamRejection.NAME_CHARACTER_NUMBER },
+			{ "PRO_SERVER", ESteamRejection.PRO_SERVER },
+			{ "PRO_CHARACTER", ESteamRejection.PRO_CHARACTER },
+			{ "PRO_DESYNC", ESteamRejection.PRO_DESYNC },
+			{ "PRO_APPEARANCE", ESteamRejection.PRO_APPEARANCE },
+			{ "ALREADY_PENDING", ESteamRejection.ALREADY_PENDING },
+			{ "ALREADY_CONNECTED", ESteamRejection.ALREADY_CONNECTED },
+			{ "NOT_PENDING", ESteamRejection.NOT_PENDING },
+			{ "LATE_PENDING", ESteamRejection.LATE_PENDING },
+			{ "WHITELISTED", ESteamRejection.WHITELISTED },
+			{ "AUTH_VERIFICATION", ESteamRejection.AUTH_VERIFICATION },
+			{ "AUTH_NO_STEAM", ESteamRejection.AUTH_NO_STEAM },
+			{ "AUTH_LICENSE_EXPIRED", ESteamRejection.AUTH_LICENSE_EXPIRED },
+			{ "AUTH_VAC_BAN", ESteamRejection.AUTH_VAC_BAN },
+			{ "AUTH_ELSEWHERE", ESteamRejection.AUTH_ELSEWHERE },
+			{ "AUTH_TIMED_OUT", ESteamRejection.AUTH_TIMED_OUT },
+			{ "AUTH_USED", ESteamRejection.AUTH_USED },
+			{ "AUTH_NO_USER", ESteamRejection.AUTH_NO_USER },
+			{ "AUTH_PUB_BAN", ESteamRejection.AUTH_PUB_BAN },
+			{ "AUTH_ECON_DESERIALIZE", ESteamRejection.AUTH_ECON_DESERIALIZE },
+			{ "AUTH_ECON_VERIFY", ESteamRejection.AUTH_ECON_VERIFY },
+			{ "PING", ESteamRejection.PING },
+			{ "PLUGIN", ESteamRejection.PLUGIN },
+			{ "CLIENT_MODULE_DESYNC", ESteamRejection.CLIENT_MODULE_DESYNC },
+			{ "SERVER_MODULE_DESYNC", ESteamRejection.SERVER_MODULE_DESYNC },
+			{ "WRONG_LEVEL_VERSION", ESteamRejection.WRONG_LEVEL_VERSION },
+			{ "WRONG_HASH_ECON", ESteamRejection.WRONG_HASH_ECON },
+			{ "WRONG_HASH_MASTER_BUNDLE", ESteamRejection.WRONG_HASH_MASTER_BUNDLE },
+			{ "LATE_PENDING_STEAM_AUTH", ESteamRejection.LATE_PENDING_STEAM_AUTH },
+			{ "LATE_PENDING_STEAM_ECON", ESteamRejection.LATE_PENDING_STEAM_ECON },
+			{ "LATE_PENDING_STEAM_GROUPS", ESteamRejection.LATE_PENDING_STEAM_GROUPS },
+			{ "NAME_PRIVATE_LONG", ESteamRejection.NAME_PRIVATE_LONG },
+			{ "NAME_PRIVATE_INVALID", ESteamRejection.NAME_PRIVATE_INVALID },
+			{ "NAME_PRIVATE_NUMBER", ESteamRejection.NAME_PRIVATE_NUMBER }
+		};
+
 		[ScriptEventSubscription]
 		public void onPlayerJoin(CSteamID playerSteam, ref ESteamRejection? rejectionReason)
 		{
 			var args = new ExpressionValue[]
 			{
-				ExpressionValue.CreateObject(new PlayerSteam(playerSteam))
+				ExpressionValue.CreateObject(new PlayerSteam(playerSteam)),
+				rejectionReason.ToString()
 			};
-			
+
 			RunEvent(this, args);
+
+			if (rejectionReasons.ContainsKey(args[1].ToString()))
+			{
+				rejectionReason = rejectionReasons[args[1].ToString()];
+			}
 		}
 	}
 
-	[ScriptEvent("onPlayerTakingItem", "player, *cancel")]
+	[ScriptEvent("onPlayerTakingItem", "player, itemId, *cancel")]
 	public class OnPlayerTakingItem : ScriptEvent
 	{
 		public override EventInfo EventHook(out object instance)
@@ -204,11 +260,12 @@ namespace uScriptEvents
 			var args = new ExpressionValue[]
 			{
 				ExpressionValue.CreateObject(new PlayerClass(player)),
+				ExpressionValue.CreateObject(new ItemClass(itemData.item.id)),
 				!shouldAllow
 			};
 
 			RunEvent(this, args);
-			shouldAllow = !args[1];
+			shouldAllow = !args[2];
 		}
 	}
 
@@ -1084,6 +1141,15 @@ namespace uScriptEvents
 			return typeof(DamageTool).GetEvent("damagePlayerRequested", BindingFlags.Public | BindingFlags.Static);
 		}
 
+		Dictionary<string, ERagdollEffect> ragdolls = new Dictionary<string, ERagdollEffect>()
+		{
+			{"NONE", ERagdollEffect.NONE},
+			{"BRONZE", ERagdollEffect.BRONZE},
+			{"SILVER", ERagdollEffect.SILVER},
+			{"GOLD", ERagdollEffect.GOLD},
+			{"ZERO", ERagdollEffect.ZERO_KELVIN},
+		};
+
 		[ScriptEventSubscription]
 		public void OnPlayerDamaged(ref DamagePlayerParameters parameters, ref bool shouldAllow)
 		{
@@ -1105,32 +1171,14 @@ namespace uScriptEvents
 			RunEvent(this, args);
 			shouldAllow = !args[2];
 			parameters.damage = (float)(double)args[3];
-			switch (args[6].ToString())
+
+			if (ragdolls.ContainsKey(args[6].ToString()))
 			{
-				case "NONE":
-					parameters.ragdollEffect = ERagdollEffect.NONE;
-					break;
-
-				case "BRONZE":
-					parameters.ragdollEffect = ERagdollEffect.BRONZE;
-					break;
-
-				case "SILVER":
-					parameters.ragdollEffect = ERagdollEffect.SILVER;
-					break;
-
-				case "GOLD":
-					parameters.ragdollEffect = ERagdollEffect.GOLD;
-					break;
-
-				case "ZERO":
-					parameters.ragdollEffect = ERagdollEffect.ZERO_KELVIN;
-					break;
-
-				default:
-					Console.WriteLine("uScriptExtended module from uScript => Ragdoll must be 'NONE', 'BRONZE', 'GOLD', 'SILVER', or 'ZERO'.", Console.ForegroundColor = ConsoleColor.Red);
-					Console.ResetColor();
-					break;
+				parameters.ragdollEffect = ragdolls[args[6].ToString()];
+			}
+			else
+			{
+				Rocket.Core.Logging.Logger.LogWarning("uScriptExtended module from uScript => Ragdoll must be 'NONE', 'BRONZE', 'GOLD', 'SILVER', or 'ZERO'.");
 			}
 		}
 	}
@@ -1143,6 +1191,15 @@ namespace uScriptEvents
 			instance = null;
 			return typeof(DamageTool).GetEvent("damageAnimalRequested", BindingFlags.Public | BindingFlags.Static);
 		}
+
+		Dictionary<string, ERagdollEffect> ragdolls = new Dictionary<string, ERagdollEffect>()
+		{
+			{"NONE", ERagdollEffect.NONE},
+			{"BRONZE", ERagdollEffect.BRONZE},
+			{"SILVER", ERagdollEffect.SILVER},
+			{"GOLD", ERagdollEffect.GOLD},
+			{"ZERO", ERagdollEffect.ZERO_KELVIN},
+		};
 
 		[ScriptEventSubscription]
 		public void OnAnimalDamage(ref DamageAnimalParameters parameters, ref bool shouldAllow)
@@ -1167,32 +1224,14 @@ namespace uScriptEvents
 			RunEvent(this, args);
 			shouldAllow = !args[2];
 			parameters.damage = (float)(double)args[3];
-			switch (args[5].ToString())
+
+			if (ragdolls.ContainsKey(args[5].ToString()))
 			{
-				case "NONE":
-					parameters.ragdollEffect = ERagdollEffect.NONE;
-					break;
-
-				case "BRONZE":
-					parameters.ragdollEffect = ERagdollEffect.BRONZE;
-					break;
-
-				case "SILVER":
-					parameters.ragdollEffect = ERagdollEffect.SILVER;
-					break;
-
-				case "GOLD":
-					parameters.ragdollEffect = ERagdollEffect.GOLD;
-					break;
-
-				case "ZERO":
-					parameters.ragdollEffect = ERagdollEffect.ZERO_KELVIN;
-					break;
-
-				default:
-					Console.WriteLine("uScriptExtended module from uScript => Ragdoll must be 'NONE', 'BRONZE', 'GOLD', 'SILVER', or 'ZERO'.", Console.ForegroundColor = ConsoleColor.Red);
-					Console.ResetColor();
-				break;
+				parameters.ragdollEffect = ragdolls[args[5].ToString()];
+			}
+			else
+			{
+				Rocket.Core.Logging.Logger.LogWarning("uScriptExtended module from uScript => Ragdoll must be 'NONE', 'BRONZE', 'GOLD', 'SILVER', or 'ZERO'.");
 			}
 		}
 	}
@@ -1205,6 +1244,15 @@ namespace uScriptEvents
 			instance = null;
 			return typeof(DamageTool).GetEvent("damageZombieRequested", BindingFlags.Public | BindingFlags.Static);
 		}
+
+		Dictionary<string, ERagdollEffect> ragdolls = new Dictionary<string, ERagdollEffect>()
+		{
+			{"NONE", ERagdollEffect.NONE},
+			{"BRONZE", ERagdollEffect.BRONZE},
+			{"SILVER", ERagdollEffect.SILVER},
+			{"GOLD", ERagdollEffect.GOLD},
+			{"ZERO", ERagdollEffect.ZERO_KELVIN},
+		};
 
 		[ScriptEventSubscription]
 		public void OnZombieDamage(ref DamageZombieParameters parameters, ref bool shouldAllow)
@@ -1229,32 +1277,14 @@ namespace uScriptEvents
 			RunEvent(this, args);
 			shouldAllow = !args[2];
 			parameters.damage = (float)(double)args[3];
-			switch(args[5].ToString())
+
+			if (ragdolls.ContainsKey(args[5].ToString()))
 			{
-				case "NONE":
-					parameters.ragdollEffect = ERagdollEffect.NONE;
-				break;
-
-				case "BRONZE":
-					parameters.ragdollEffect = ERagdollEffect.BRONZE;
-				break;
-
-				case "SILVER":
-					parameters.ragdollEffect = ERagdollEffect.SILVER;
-				break;
-
-				case "GOLD":
-					parameters.ragdollEffect = ERagdollEffect.GOLD;
-				break;
-
-				case "ZERO":
-					parameters.ragdollEffect = ERagdollEffect.ZERO_KELVIN;
-				break;
-
-				default:
-					Console.WriteLine("uScriptExtended module from uScript => Ragdoll must be 'NONE', 'BRONZE', 'GOLD', 'SILVER', or 'ZERO'.", Console.ForegroundColor = ConsoleColor.Red);
-					Console.ResetColor();
-				break;
+				parameters.ragdollEffect = ragdolls[args[5].ToString()];
+			}
+			else
+			{
+				Rocket.Core.Logging.Logger.LogWarning("uScriptExtended module from uScript => Ragdoll must be 'NONE', 'BRONZE', 'GOLD', 'SILVER', or 'ZERO'.");
 			}
 		}
 	}

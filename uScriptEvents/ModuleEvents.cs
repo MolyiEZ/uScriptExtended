@@ -1,4 +1,5 @@
-﻿using Rocket.Core.Plugins;
+﻿using Rocket.API.Extensions;
+using Rocket.Core.Plugins;
 using Rocket.Unturned;
 using Rocket.Unturned.Events;
 using Rocket.Unturned.Player;
@@ -6,22 +7,27 @@ using SDG.Unturned;
 using Steamworks;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Tracing;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using uScript.Core;
 using uScript.Module.Main;
 using uScript.Module.Main.Classes;
 using uScript.Unturned;
-using static ModuleEvents.InternalEvents;
+using static ModuleEvents.ModuleEvents;
 
 namespace ModuleEvents
 {
 	public class ModuleEvents : ScriptModuleBase
 	{
+
 		protected override void OnModuleLoaded()
 		{
-			U.Events.OnBeforePlayerConnected += ModuleEvents.AddComponent;
+			U.Events.OnBeforePlayerConnected += ModuleEvents.AddComponentPlayer;
+
 
 			BarricadeManager.onDamageBarricadeRequested += (CSteamID instigatorSteamID, Transform barricadeTransform, ref ushort pendingTotalDamage, ref bool shouldAllow, EDamageOrigin damageOrigin) =>
 			{
@@ -136,7 +142,7 @@ namespace ModuleEvents
 
 		public static event VehicleCarjackedSignature onVehicleCarjacked;
 
-		private static void AddComponent(UnturnedPlayer player)
+		private static void AddComponentPlayer(UnturnedPlayer player)
 		{
 			player.Player.gameObject.AddComponent<InternalEvents>();
 		}
@@ -170,7 +176,7 @@ namespace ModuleEvents
 
 		public static event InternalEvents.RadiationUpdated OnRadiationUpdated;
 
-		private void Awake() 
+		private void Awake()
 		{
 			var player = gameObject.transform.GetComponent<Player>();
 

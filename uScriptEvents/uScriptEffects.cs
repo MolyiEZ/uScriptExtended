@@ -48,7 +48,7 @@ namespace uScriptBarricades
 			}
 
 			[ScriptFunction(null)]
-			public static void EffectClear(string effectID) 
+			public static void EffectClear(string effectID)
 			{
 				Guid guid = Guid.Parse(effectID);
 				EffectManager.ClearEffectByGuid_AllPlayers(guid);

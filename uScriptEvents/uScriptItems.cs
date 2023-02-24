@@ -297,6 +297,17 @@ namespace uScriptItems
 				get
 				{
 					return this.Item.GetType().ToString();
+					
+				}
+			}
+
+			[ScriptProperty(null)]
+			public string rarity
+			{
+				get
+				{
+					return this.Item.GetAsset().rarity.ToString();
+
 				}
 			}
 		}
@@ -342,6 +353,15 @@ namespace uScriptItems
 		{
 			if (!(instance.Data is ItemClass item)) return;
 			item.Item.item.durability = (byte)value;
+		}
+
+		[ScriptFunction("get_rarity")]
+		public static string getRarity([ScriptInstance] ExpressionValue instance)
+		{
+			if (!(instance.Data is ItemClass item)) return null;
+			ItemAsset asset = item.Item.GetAsset<ItemAsset>();
+			if (!(asset != null)) return null;
+			return asset.rarity.ToString();
 		}
 	}
 }
