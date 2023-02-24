@@ -29,7 +29,7 @@ Event: onPlayerBrokenUpdated(player, isBroken)
 Event: onPlayerDamagedCustom(player, killer, *cancel, *damage, cause, limb, ragdoll)
 Event: onPlayerFoodUpdated(player, newFood)
 Event: onPlayerHealthUpdated(player, newHealth)
-Event: onPlayerJoinRequested(playerSteam)
+Event: onPlayerJoinRequested(playerSteam, rejectionReason)
 Event: onPlayerOxygenUpdated(player, newOxygen)
 Event: onPlayerPositionUpdated(player)
 Event: onPlayerRadiationUpdated(player, isRadiated)
@@ -64,17 +64,22 @@ Event: onZombieDamaged(zombie, killer, *cancel, *damage, limb, ragdoll)
 
 animal [Class]:
     +alertPlayer(player)
+    +damage(uInt16 amount, [bool dropLoot], [string ragdoll])
     +dropLoot()
-    +kill(string ragdoll)
+    +kill([string ragdoll])
     +moveTo(vector3 position)
     +runFrom(vector3 position)
     +startle()
-    +health		   [get]	    : float
-    +id 		   [get]	    : ushort
-    +isFleeing		   [get]	    : boolean
-    +isHunting		   [get]	    : boolean
+    +health		       [get/set]	: uInt16
+    +id 		       [get]	    : uInt16
+    +isAttacking       [get/set]	: boolean
+    +isFleeing		   [get/set]	: boolean
+    +isHunting		   [get/set]	: boolean
+    +isMoving          [get/set]	: boolean
+    +isRunning         [get/set]	: boolean
+    +isWandering       [get/set]	: boolean
     +instanceId		   [get]	    : uInt32
-    +position		   [get]	    : vector3
+    +position		   [get/set]	: vector3
     +targetPlayer	   [get]	    : player
     +targetPoint	   [get]	    : vector3
 
@@ -97,11 +102,11 @@ effectspawn [Class]:
     +effectClear(string guid)
 
 farm [Class]:
-    +canFertilize	   [get]	    : boolean
-    +grow 		   [get]	    : ushort
-    +growth		   [get]	    : ushort
+    +canFertilize	       [get]	    : boolean
+    +grow 		           [get]	    : uInt16
+    +growth		           [get]	    : uInt16
     +harvestExperience	   [get/set]	    : uInt32
-    +isFullyGrown	   [get]	    : boolean
+    +isFullyGrown	       [get]	    : boolean
 
 fire [Class]:
     +lit                   [get/set]       : boolean
@@ -144,17 +149,20 @@ item [Class]:
     +description           [get]           : string
     +durability            [get/set]       : uInt16
     +gun                   [get]           : gun
+    +rarity	               [get]	       : string
 
 oven [Class]:
     +lit                   [get/set]       : boolean
     +wired                 [get]           : boolean
 
 player [Class]:
-    +arrestCustom(ushort id, ushort strenght)
-    +isGrounded		   [get]	   : boolean
-    +isSafe		   [get]	   : boolean
-    +isRadiated		   [get]	   : boolean
-    +key(key)              [get]           : boolean               
+    +arrestCustom(uInt16 id, uInt16 strenght)
+    +hasEarpiece	       [get]	       : boolean
+    +isGrounded		       [get]	       : boolean
+    +isSafe		           [get]	       : boolean
+    +isRadiated		       [get]	       : boolean
+    +key(key)              [get]           : boolean 
+    +oxygen	               [get/set]	   : uInt16
     +salvageTime           [get/set]       : uInt16
     +stamina               [get/set]       : uInt16
     +temperature           [get]           : string
@@ -178,37 +186,61 @@ playerSteam [Class]:
     
 serverExtended [Class]:
     +clearAllAnimals()
-    +getAnimal(ushort instanceId) : animal
+    +getAnimal(uInt16 instanceId) : animal
     +getAnimalsInRadius(vector3 position, single radius) : object
     +getPlayersInRadius(vector3 position, single radius) : object
     +getZombiesInRadius(vector3 position, single radius) : object
 
 vehicle [Class]:
     +enterVehicle(player)
+    +isBatteryFull	       [get]	       : boolean
+	+isBatteryReplaceable  [get]	       : boolean
+	+isDrowned	           [get]	       : boolean
+	+isEmpty	           [get]	       : boolean
+	+isEngineOn	           [get]	       : boolean
+	+isEnginePowered	   [get]	       : boolean
+	+isExitable	           [get]	       : boolean
+	+isInsideNoDamageZone  [get]	       : boolean
+	+isInsideSafezone	   [get]	       : boolean
+	+isRefillable	       [get]	       : boolean
+	+isRepaired	           [get]	       : boolean
+	+isSiphonable	       [get]	       : boolean
+	+isSkinned	           [get]	       : boolean
+	+isTireReplaceable	   [get]	       : boolean
+	+isUnderwater	       [get]	       : boolean
     
 zombie [Class]:
     +acid(vector3 direction, vector3 origin)
     +boulder(vector3 direction, vector3 origin)
     +breath()
     +charge()
+    +damage(uInt16 amount, [bool dropLoot], [string ragdoll])
     +dropLoot()
+    +kill([string ragdoll])
     +throw()
     +spark(vector3 target)
+    +spawnZombie(vector3 position, [string speciality], [single angle])
     +spit()
     +stomp()
-    +health 		   [get]	   : float
-    +isBoss		   [get]	   : boolean
+    +health 		   [get/set]   : uInt16
+    +isBoss		       [get]	   : boolean
     +isCutesy		   [get]	   : boolean
-    +isHunting		   [get/set]       : boolean
+    +isHunting		   [get/set]   : boolean
     +isHyper		   [get]	   : boolean
-    +isMega		   [get]	   : boolean
+    +isMega		       [get]	   : boolean
     +isRadioactive	   [get]	   : boolean
-    +id 	 	   [get]	   : ushort
+    +id 	 	       [get]	   : uInt16
     +maxHealth		   [get]	   : float
+    +position		   [get/set]   : vector3
+    +speciality		   [get/set]   : string
     
     
 Explanation:
-Ragdoll can be: "NONE", "BRONZE", "SILVER", "GOLD" or "ZERO".
+Ragdoll must be one of these: "NONE", "BRONZE", "SILVER", "GOLD" or "ZERO".
+
+Speciality must be one of these: "NONE", "NORMAL", "MEGA", "CRAWLER", "SPRINTER", "FLANKER_FRIENDLY", "FLANKER_STALK", "BURNER", "ACID", "BOSS_ELECTRIC", "BOSS_WIND", "BOSS_FIRE", "BOSS_ALL", "BOSS_MAGMA", "SPIRIT", "BOSS_SPIRIT", "BOSS_NUCLEAR", "DL_RED_VOLATILE", "DL_BLUE_VOLATILE", "BOSS_ELVER_STOMPER", "BOSS_KUWAIT".
+
+RejectionReason must be one of these: "SERVER_FULL", "WRONG_HASH_LEVEL", "WRONG_HASH_ASSEMBLY", "WRONG_VERSION", "WRONG_PASSWORD", "NAME_PLAYER_SHORT", "NAME_PLAYER_LONG", "NAME_PLAYER_INVALID", "NAME_PLAYER_NUMBER", "NAME_CHARACTER_SHORT", "NAME_CHARACTER_LONG", "NAME_CHARACTER_INVALID", "NAME_CHARACTER_NUMBER", "PRO_SERVER", "PRO_CHARACTER", "PRO_DESYNC", "PRO_APPEARANCE", "ALREADY_PENDING", "ALREADY_CONNECTED", "NOT_PENDING", "LATE_PENDING", "WHITELISTED", "AUTH_VERIFICATION", "AUTH_NO_STEAM", "AUTH_LICENSE_EXPIRED", "AUTH_VAC_BAN", "AUTH_ELSEWHERE", "AUTH_TIMED_OUT", "AUTH_USED", "AUTH_NO_USER", "AUTH_PUB_BAN", "AUTH_ECON_DESERIALIZE", "AUTH_ECON_VERIFY", "PING", "PLUGIN", "CLIENT_MODULE_DESYNC", "SERVER_MODULE_DESYNC", "WRONG_LEVEL_VERSION", "WRONG_HASH_ECON", "WRONG_HASH_MASTER_BUNDLE", "LATE_PENDING_STEAM_AUTH", "LATE_PENDING_STEAM_ECON", "LATE_PENDING_STEAM_GROUPS", "NAME_PRIVATE_LONG", "NAME_PRIVATE_INVALID", "NAME_PRIVATE_NUMBER"
 
 If something is inside [] means that is optional
 
