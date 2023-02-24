@@ -70,18 +70,18 @@ animal [Class]:
     +moveTo(vector3 position)
     +runFrom(vector3 position)
     +startle()
-    +health		       [get/set]	: uInt16
-    +id 		       [get]	    : uInt16
-    +isAttacking       [get/set]	: boolean
+    +health		   [get/set]	: uInt16
+    +id 		   [get]	: uInt16
+    +isAttacking           [get/set]	: boolean
     +isFleeing		   [get/set]	: boolean
     +isHunting		   [get/set]	: boolean
-    +isMoving          [get/set]	: boolean
-    +isRunning         [get/set]	: boolean
-    +isWandering       [get/set]	: boolean
-    +instanceId		   [get]	    : uInt32
+    +isMoving              [get/set]	: boolean
+    +isRunning         	   [get/set]	: boolean
+    +isWandering       	   [get/set]	: boolean
+    +instanceId		   [get]	: uInt32
     +position		   [get/set]	: vector3
-    +targetPlayer	   [get]	    : player
-    +targetPoint	   [get]	    : vector3
+    +targetPlayer	   [get]	: player
+    +targetPoint	   [get]	: vector3
 
 barricade [Class]:
     +anglex                [get]	    : single
