@@ -226,7 +226,7 @@ namespace uScriptEvents
 				}
 				set 
 				{
-					this.Animal.transform.position = position.Vector3;
+					this.Animal.transform.position = value.Vector3;
 				}
 			}
 

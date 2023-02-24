@@ -132,11 +132,15 @@ namespace uScriptEvents
 			}
 
 			[ScriptProperty(null)]
-			public float health
+			public ushort health
 			{
 				get
 				{
-					return this.Zombie.GetHealth();
+					return (ushort)this.Zombie.GetHealth();
+				}
+				set
+				{
+					ReflectionUtil.ReflectionUtil.setValue("health", value, this.Zombie);
 				}
 			}
 
