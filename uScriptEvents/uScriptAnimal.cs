@@ -229,7 +229,6 @@ namespace uScriptEvents
 					this.Animal.transform.position = value.Vector3;
 				}
 			}
-
 		}
 	}
 }

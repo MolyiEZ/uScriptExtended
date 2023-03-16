@@ -17,7 +17,9 @@ using uScript.Module.Main;
 using uScript.Module.Main.Classes;
 using uScript.Module.Main.Events;
 using uScript.Unturned;
+using uScriptClothingEvents;
 using static SDG.Unturned.PlayerVoice;
+using static uScript.Module.Main.PlayerEvents;
 using static uScriptBarricades.Generator;
 using static uScriptEvents.AnimalFunction;
 using static uScriptEvents.ZombieFunction;
@@ -26,28 +28,6 @@ using static uScriptPlayers.Players;
 
 namespace uScriptEvents
 {
-	[ScriptEvent("onPlayerNPC", "player, id")]
-	public class OnPlayerNPC : ScriptEvent
-	{
-		public override EventInfo EventHook(out object instance)
-		{
-			instance = null;
-			return typeof(NPCEventManager).GetEvent("onEvent", BindingFlags.Public | BindingFlags.Static);
-		}
-
-		[ScriptEventSubscription]
-		public void OnPlayerNP(Player instigatingPlayer, string eventId)
-		{
-			var args = new ExpressionValue[]
-			{
-				ExpressionValue.CreateObject(new PlayerClass(instigatingPlayer)),
-				eventId.ToString()
-			};
-
-			RunEvent(this, args);
-		}
-	}
-
 	[ScriptEvent("onBarricadeDamaged", "player, barricade, damage, cause, *cancel")]
 	public class OnDamageBarricade : ScriptEvent
 	{
@@ -1286,6 +1266,170 @@ namespace uScriptEvents
 			{
 				Rocket.Core.Logging.Logger.LogWarning("uScriptExtended module from uScript => Ragdoll must be 'NONE', 'BRONZE', 'GOLD', 'SILVER', or 'ZERO'.");
 			}
+		}
+	}
+	
+	[ScriptEvent("onPlayerClothingEquipping", "player, item, slot, *cancel")]
+	public class OnPlayerClothingEquipping : ScriptEvent
+	{
+		public override EventInfo EventHook(out object instance)
+		{
+			instance = null;
+			return typeof(ClothingEvents).GetEvent("OnEquippingClothing", BindingFlags.Public | BindingFlags.Static);
+		}
+
+		[ScriptEventSubscription]
+		public void OnPlayerClothingEquip(Player player, ItemJar item, byte quality, byte[] state, EClothingSlot type, ref bool cancel)
+		{
+			var args = new ExpressionValue[]
+			{
+				ExpressionValue.CreateObject(new PlayerClass(player)),
+				ExpressionValue.CreateObject(new ItemClass(item)),
+				type.ToString(),
+				cancel
+			};
+
+			RunEvent(this, args);
+			cancel = args[3];
+		}
+	}
+	
+	[ScriptEvent("onPlayerClothingUnequipping", "player, item, slot, *cancel")]
+	public class OnPlayerClothingUnequipping : ScriptEvent
+	{
+		public override EventInfo EventHook(out object instance)
+		{
+			instance = null;
+			return typeof(ClothingEvents).GetEvent("OnUnequippingClothing", BindingFlags.Public | BindingFlags.Static);
+		}
+
+		[ScriptEventSubscription]
+		public void OnPlayerClothingUnequip(Player player, ItemJar item, byte quality, byte[] state, EClothingSlot type, ref bool cancel)
+		{
+			var args = new ExpressionValue[]
+			{
+				ExpressionValue.CreateObject(new PlayerClass(player)),
+				ExpressionValue.CreateObject(new ItemClass(item)),
+				type.ToString(),
+				cancel
+			};
+
+			RunEvent(this, args);
+			cancel = args[3];
+		}
+	}
+
+	[ScriptEvent("onAnimalSpawned", "animal")]
+	public class OnAnimalSpawned : ScriptEvent
+	{
+		public override EventInfo EventHook(out object instance)
+		{
+			instance = null;
+			return typeof(AnimalEvents).GetEvent("OnAnimalAdded", BindingFlags.Public | BindingFlags.Static);
+		}
+
+		[ScriptEventSubscription]
+		public void OnAnimalSpawn(Animal nativeAnimal)
+		{
+			var args = new ExpressionValue[]
+			{
+				ExpressionValue.CreateObject(new AnimalClass(nativeAnimal)),
+			};
+
+			RunEvent(this, args);
+		}
+	}
+
+	[ScriptEvent("onAnimalRevived", "animal")]
+	public class OnAnimalRevived : ScriptEvent
+	{
+		public override EventInfo EventHook(out object instance)
+		{
+			instance = null;
+			return typeof(AnimalEvents).GetEvent("OnAnimalRevived", BindingFlags.Public | BindingFlags.Static);
+		}
+
+		[ScriptEventSubscription]
+		public void OnAnimalRevive(Animal nativeAnimal)
+		{
+			var args = new ExpressionValue[]
+			{
+				ExpressionValue.CreateObject(new AnimalClass(nativeAnimal)),
+			};
+
+			RunEvent(this, args);
+		}
+	}
+
+	[ScriptEvent("onAnimalFleeing", "animal, direction, *cancel")]
+	public class OnAnimalFleeing : ScriptEvent
+	{
+		public override EventInfo EventHook(out object instance)
+		{
+			instance = null;
+			return typeof(AnimalEvents).GetEvent("OnAnimalFleeing", BindingFlags.Public | BindingFlags.Static);
+		}
+
+		[ScriptEventSubscription]
+		public void OnAnimalFlee(Animal nativeAnimal, ref Vector3 direction, ref bool sendToPack, ref bool cancel)
+		{
+			var args = new ExpressionValue[]
+			{
+				ExpressionValue.CreateObject(new AnimalClass(nativeAnimal)),
+				ExpressionValue.CreateObject(new Vector3Class(direction)),
+				cancel
+			};
+
+			RunEvent(this, args);
+			cancel = args[2];
+		}
+	}
+
+	[ScriptEvent("onAnimalAttackingPoint", "animal, point, *cancel")]
+	public class OnAnimalAttackingPoint : ScriptEvent
+	{
+		public override EventInfo EventHook(out object instance)
+		{
+			instance = null;
+			return typeof(AnimalEvents).GetEvent("OnAnimalAttackingPoint", BindingFlags.Public | BindingFlags.Static);
+		}
+
+		[ScriptEventSubscription]
+		public void OnAnimalAttacking(Animal nativeAnimal, ref Vector3 point, ref bool sendToPack, ref bool cancel)
+		{
+			var args = new ExpressionValue[]
+			{
+				ExpressionValue.CreateObject(new AnimalClass(nativeAnimal)),
+				ExpressionValue.CreateObject(new Vector3Class(point)),
+				cancel
+			};
+
+			RunEvent(this, args);
+			cancel = args[2];
+		}
+	}
+
+	[ScriptEvent("onAnimalAttackingPlayer", "animal, player, *cancel")]
+	public class OnAnimalAttackingPlayer : ScriptEvent
+	{
+		public override EventInfo EventHook(out object instance)
+		{
+			instance = null;
+			return typeof(AnimalEvents).GetEvent("OnAnimalAttackingPlayer", BindingFlags.Public | BindingFlags.Static);
+		}
+
+		[ScriptEventSubscription]
+		public void OnAnimalAttackingPlay(Animal nativeAnimal, ref Player player, ref bool sendToPack, ref bool cancel)
+		{
+			var args = new ExpressionValue[]
+			{
+				ExpressionValue.CreateObject(new AnimalClass(nativeAnimal)),
+				ExpressionValue.CreateObject(new PlayerClass(player)),
+				cancel
+			};
+
+			RunEvent(this, args);
+			cancel = args[2];
 		}
 	}
 }

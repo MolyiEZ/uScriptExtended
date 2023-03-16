@@ -190,4 +190,19 @@ namespace uScriptPlayers
 			return new ZombieClass(zombie);
 		}
 	}
+
+	[ScriptTypeExtension(typeof(PlayerInventoryClass))]
+	public class PlayerInventoryExtension
+	{
+		[ScriptFunction("addItemAuto")]
+		public static void addItemCustom([ScriptInstance] ExpressionValue instance, ushort itemId, byte amount = 1, bool autoEquipWeapon = true, bool autoEquipUseable = true, bool autoEquipClothing = true)
+		{
+			if (!(instance.Data is PlayerInventoryClass playerInventory)) return;
+
+			for(int i = 0; i < amount; i++)
+			{
+				playerInventory.Player.inventory.forceAddItemAuto(new Item(itemId, true), autoEquipWeapon, autoEquipUseable, autoEquipClothing);
+			}
+		}
+	}
 }

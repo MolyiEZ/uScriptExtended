@@ -1,4 +1,5 @@
-﻿using Rocket.API.Extensions;
+﻿using HarmonyLib;
+using Rocket.API.Extensions;
 using Rocket.Core.Plugins;
 using Rocket.Unturned;
 using Rocket.Unturned.Events;
@@ -17,17 +18,21 @@ using uScript.Core;
 using uScript.Module.Main;
 using uScript.Module.Main.Classes;
 using uScript.Unturned;
+using uScriptClothingEvents;
 using static ModuleEvents.ModuleEvents;
 
 namespace ModuleEvents
 {
 	public class ModuleEvents : ScriptModuleBase
 	{
+		private Harmony harmony;
 
 		protected override void OnModuleLoaded()
 		{
 			U.Events.OnBeforePlayerConnected += ModuleEvents.AddComponentPlayer;
 
+			harmony = new Harmony("HandCuff_Oasis");
+			harmony.PatchAll();
 
 			BarricadeManager.onDamageBarricadeRequested += (CSteamID instigatorSteamID, Transform barricadeTransform, ref ushort pendingTotalDamage, ref bool shouldAllow, EDamageOrigin damageOrigin) =>
 			{
