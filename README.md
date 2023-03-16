@@ -3,7 +3,12 @@
 ## Documentation
 
 ```
+Event: onAnimalAttackingPlayer(animal, player, *cancel)
+Event: onAnimalAttackingPoint(animal, point, *cancel)
 Event: onAnimalDamaged(animal, killer, *cancel, *damage, limb, ragdoll)
+Event: onAnimalFleeing(animal, direction, *cancel)
+Event: onAnimalSpawned(animal)
+Event: onAnimalRevived(animal)
 
 Event: onBarricadeBuilded(barricade)
 Event: onBarricadeDamaged(player, barricade, damage, cause, *cancel)
@@ -26,6 +31,8 @@ Event: onGunTacticalChanged(player, item, oldItem, newItem, *cancel)
 
 Event: onPlayerBleedingUpdated(player, isBleeding)
 Event: onPlayerBrokenUpdated(player, isBroken)
+Event: onPlayerClothingEquipping(player, item, slot, *cancel)
+Event: onPlayerClothingUnequipping(player, item, slot, *cancel)
 Event: onPlayerDamagedCustom(player, killer, *cancel, *damage, cause, limb, ragdoll)
 Event: onPlayerFoodUpdated(player, newFood)
 Event: onPlayerHealthUpdated(player, newHealth)
@@ -149,7 +156,10 @@ item [Class]:
     +description           [get]           : string
     +durability            [get/set]       : uInt16
     +gun                   [get]           : gun
-    +rarity	               [get]	       : string
+    +rarity	           [get]	   : string
+    
+map [Class]:
+    +getKey(object value)  [get]	   : object
 
 oven [Class]:
     +lit                   [get/set]       : boolean
@@ -157,12 +167,12 @@ oven [Class]:
 
 player [Class]:
     +arrestCustom(uInt16 id, uInt16 strenght)
-    +hasEarpiece	       [get]	       : boolean
-    +isGrounded		       [get]	       : boolean
-    +isSafe		           [get]	       : boolean
-    +isRadiated		       [get]	       : boolean
+    +hasEarpiece	   [get]	       : boolean
+    +isGrounded		   [get]	       : boolean
+    +isSafe		   [get]	       : boolean
+    +isRadiated		   [get]	       : boolean
     +key(key)              [get]           : boolean 
-    +oxygen	               [get/set]	   : uInt16
+    +oxygen	           [get/set]	   : uInt16
     +salvageTime           [get/set]       : uInt16
     +stamina               [get/set]       : uInt16
     +temperature           [get]           : string
@@ -175,6 +185,9 @@ playerClothing [Class]:
     +removePants()
     +removeShirt()
     +removeVest()
+    
+playerInventoy [Class]:
+    +addItemAuto(ushort itemId, [byte amount], [bool autoEquipWeapon], [bool autoEquipUseable], [bool autoEquipClothing])
     
 playerLook [Class]:
     +getAnimal() : animal
@@ -190,6 +203,15 @@ serverExtended [Class]:
     +getAnimalsInRadius(vector3 position, single radius) : object
     +getPlayersInRadius(vector3 position, single radius) : object
     +getZombiesInRadius(vector3 position, single radius) : object
+
+String [Base Type]:
+    +isMatch(string value) [get]	   : boolean
+    
+structure [Class]:
+    +anglex   		   [get]	   : single
+    +angley   		   [get] 	   : single
+    +anglez   		   [get]	   : single
+    +isWired  		   [get]	   : boolean
 
 vehicle [Class]:
     +enterVehicle(player)
