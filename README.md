@@ -61,6 +61,8 @@ Event: onStructureSalvaged(player, structure, *cancel)
 Event: onSiphonVehicleRequest(player, vehicle, amount, *cancel)
 
 Event: onVehicleCarjack(player, vehicle, force, torque, *cancel)
+Event: onVehicleHeadLightsUpdated(player, vehicle, *cancel)
+Event: onVehicleHorn(player, vehicle, *cancel)
 Event: onVehicleLockpick(player, vehicle, *cancel)
 Event: onVehicleLockRequest(vehicle, *cancel)
 Event: onVehicleRepair(player, vehicle, totalHealing, *cancel)
@@ -77,6 +79,10 @@ animal [Class]:
     +moveTo(vector3 position)
     +runFrom(vector3 position)
     +startle()
+    +look(vector3 position)[get] 	: animalLook
+    +backward              [get] 	: vector3
+    +down                  [get] 	: vector3
+    +forward               [get] 	: vector3
     +health		   [get/set]	: uInt16
     +id 		   [get]	: uInt16
     +isAttacking           [get/set]	: boolean
@@ -86,9 +92,19 @@ animal [Class]:
     +isRunning         	   [get/set]	: boolean
     +isWandering       	   [get/set]	: boolean
     +instanceId		   [get]	: uInt32
+    +left                  [get] 	: vector3
     +position		   [get/set]	: vector3
+    +right                 [get] 	: vector3
     +targetPlayer	   [get]	: player
     +targetPoint	   [get]	: vector3
+    +up                    [get] 	: vector3
+    
+animalLook [Class]:
+    +getBarricade()               	: barricade
+    +getPlayer()                  	: player
+    +getPoint()                   	: vector3
+    +getStructure()              	: structure
+    +getVehicle()                 	: vehicle
 
 barricade [Class]:
     +anglex                [get]	    : single
@@ -215,21 +231,35 @@ structure [Class]:
 
 vehicle [Class]:
     +enterVehicle(player)
-    +isBatteryFull	       [get]	       : boolean
-	+isBatteryReplaceable  [get]	       : boolean
-	+isDrowned	           [get]	       : boolean
-	+isEmpty	           [get]	       : boolean
-	+isEngineOn	           [get]	       : boolean
-	+isEnginePowered	   [get]	       : boolean
-	+isExitable	           [get]	       : boolean
-	+isInsideNoDamageZone  [get]	       : boolean
-	+isInsideSafezone	   [get]	       : boolean
-	+isRefillable	       [get]	       : boolean
-	+isRepaired	           [get]	       : boolean
-	+isSiphonable	       [get]	       : boolean
-	+isSkinned	           [get]	       : boolean
-	+isTireReplaceable	   [get]	       : boolean
-	+isUnderwater	       [get]	       : boolean
+    +look(vector3 position)[get]               : vehicleLook
+    +backward              [get] 	       : vector3
+    +down                  [get] 	       : vector3
+    +forward               [get] 	       : vector3
+    +isBatteryFull	   [get]	       : boolean
+    +isBatteryReplaceable  [get]	       : boolean
+    +isDrowned	           [get]	       : boolean
+    +isEmpty	           [get]	       : boolean
+    +isEngineOn	           [get]	       : boolean
+    +isEnginePowered	   [get]	       : boolean
+    +isExitable	           [get]	       : boolean
+    +isInsideNoDamageZone  [get]	       : boolean
+    +isInsideSafezone	   [get]	       : boolean
+    +isRefillable	   [get]	       : boolean
+    +isRepaired	           [get]	       : boolean
+    +isSiphonable	   [get]	       : boolean
+    +isSkinned	           [get]	       : boolean
+    +isTireReplaceable	   [get]	       : boolean
+    +isUnderwater	   [get]	       : boolean
+    +left                  [get] 	       : vector3
+    +right                 [get] 	       : vector3
+    +up                    [get] 	       : vector3
+	
+vehicleLook [Class]:
+    +getBarricade()               : barricade
+    +getPlayer()                  : player
+    +getPoint()                   : vector3
+    +getStructure()               : structure
+    +getVehicle()                 : vehicle
     
 zombie [Class]:
     +acid(vector3 direction, vector3 origin)
