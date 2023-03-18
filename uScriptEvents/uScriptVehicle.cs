@@ -11,12 +11,130 @@ using UnityEngine;
 using uScript.API.Attributes;
 using uScript.Core;
 using uScript.Module.Main.Classes;
+using uScript.Unturned;
+using static uScriptBarricades.Generator;
+using static uScriptEvents.AnimalFunction;
+using static uScriptVehicle.VehicleLook;
 
 namespace uScriptVehicle
 {
+	public class VehicleLook : ScriptModuleBase
+	{
+		[ScriptClass("vehicleLook")]
+		public class VehicleLookClass
+		{
+			public InteractableVehicle Vehicle { get; }
+			public Vector3 Value { get; }
+
+			public VehicleLookClass(InteractableVehicle vehicle, Vector3 value)
+			{
+				Vehicle = vehicle;
+				Value = value;
+			}
+
+			[ScriptFunction(null)]
+			public BarricadeClass GetBarricade()
+			{
+				Transform aim = this.Vehicle.transform;
+				if (!Physics.Raycast(aim.position, this.Value, out var hitInfo, float.PositiveInfinity, RayMasks.BLOCK_COLLISION))
+				{
+					return null;
+				}
+
+				if (!Physics.Raycast(aim.position, this.Value, out var hitInfo2, float.PositiveInfinity, 134217728) || hitInfo.transform != hitInfo2.transform)
+				{
+					return null;
+				}
+
+				if ((hitInfo2.transform.name == "Hinge" || hitInfo2.transform.name == "Left_Hinge" || hitInfo2.transform.name == "Right_Hinge") && hitInfo2.transform.parent.name == "Skeleton")
+				{
+					return new BarricadeClass(hitInfo2.transform.parent.parent);
+				}
+
+				return new BarricadeClass(hitInfo2.transform);
+			}
+
+			[ScriptFunction(null)]
+			public PlayerClass GetPlayer()
+			{
+				if (!Physics.Raycast(this.Vehicle.transform.position, this.Value, out var hitInfo, float.PositiveInfinity, 512))
+				{
+					return null;
+				}
+
+				Player component = hitInfo.transform.GetComponent<Player>();
+				if (!(component != null))
+				{
+					return null;
+				}
+
+				return new PlayerClass(component);
+			}
+
+			[ScriptFunction(null)]
+			public Vector3Class GetPoint()
+			{
+				if (!Physics.Raycast(this.Vehicle.transform.position, this.Value, out var hitInfo, float.PositiveInfinity, RayMasks.BLOCK_COLLISION))
+				{
+					return null;
+				}
+
+				return new Vector3Class(hitInfo.point);
+			}
+
+			[ScriptFunction(null)]
+			public StructureClass GetStructure()
+			{
+				Transform aim = this.Vehicle.transform;
+				if (!Physics.Raycast(aim.position, this.Value, out var hitInfo, float.PositiveInfinity, RayMasks.BLOCK_COLLISION))
+				{
+					return null;
+				}
+
+				if (!Physics.Raycast(aim.position, this.Value, out var hitInfo2, float.PositiveInfinity, 268435456) || hitInfo.transform != hitInfo2.transform)
+				{
+					return null;
+				}
+
+				return new StructureClass(hitInfo2.transform);
+			}
+
+			[ScriptFunction(null)]
+			public VehicleClass GetVehicle()
+			{
+				Transform aim = this.Vehicle.transform;
+				if (!Physics.Raycast(aim.position, this.Value, out var hitInfo, float.PositiveInfinity, RayMasks.BLOCK_COLLISION))
+				{
+					return null;
+				}
+
+				if (!Physics.Raycast(aim.position, this.Value, out var hit, float.PositiveInfinity, 67108864) || hitInfo.transform != hit.transform)
+				{
+					return null;
+				}
+
+				InteractableVehicle interactableVehicle = VehicleManager.vehicles.FirstOrDefault((InteractableVehicle v) => v.transform == hit.transform);
+				if (!(interactableVehicle != null))
+				{
+					return null;
+				}
+
+				return new VehicleClass(interactableVehicle);
+			}
+		}
+	}
+
+
 	[ScriptTypeExtension(typeof(VehicleClass))]
 	public class FunctionsVehicle
 	{
+		[ScriptFunction("look")]
+		public static VehicleLookClass getLook([ScriptInstance] ExpressionValue instance, Vector3Class value)
+		{
+			if (!(instance.Data is VehicleClass vehicle)) return null;
+			return new VehicleLookClass(vehicle.Vehicle, value.Vector3);
+		}
+
 		[ScriptFunction("enter")]
 		public static void enterVehicle([ScriptInstance] ExpressionValue instance, PlayerClass player)
 		{
@@ -127,6 +245,48 @@ namespace uScriptVehicle
 		{
 			if (!(instance.Data is VehicleClass vehicle)) return false;
 			return vehicle.Vehicle.isUnderwater;
+		}
+
+		[ScriptFunction("get_forward")]
+		public static Vector3Class getForward([ScriptInstance] ExpressionValue instance)
+		{
+			if (!(instance.Data is VehicleClass vehicle)) return null;
+			return new Vector3Class(vehicle.Vehicle.transform.forward);
+		}
+
+		[ScriptFunction("get_backward")]
+		public static Vector3Class getBackward([ScriptInstance] ExpressionValue instance)
+		{
+			if (!(instance.Data is VehicleClass vehicle)) return null;
+			return new Vector3Class(-vehicle.Vehicle.transform.forward);
+		}
+
+		[ScriptFunction("get_right")]
+		public static Vector3Class getRight([ScriptInstance] ExpressionValue instance)
+		{
+			if (!(instance.Data is VehicleClass vehicle)) return null;
+			return new Vector3Class(vehicle.Vehicle.transform.right);
+		}
+
+		[ScriptFunction("get_left")]
+		public static Vector3Class getLeft([ScriptInstance] ExpressionValue instance)
+		{
+			if (!(instance.Data is VehicleClass vehicle)) return null;
+			return new Vector3Class(-vehicle.Vehicle.transform.right);
+		}
+
+		[ScriptFunction("get_up")]
+		public static Vector3Class getUp([ScriptInstance] ExpressionValue instance)
+		{
+			if (!(instance.Data is VehicleClass vehicle)) return null;
+			return new Vector3Class(vehicle.Vehicle.transform.up);
+		}
+
+		[ScriptFunction("get_down")]
+		public static Vector3Class getDown([ScriptInstance] ExpressionValue instance)
+		{
+			if (!(instance.Data is VehicleClass vehicle)) return null;
+			return new Vector3Class(-vehicle.Vehicle.transform.up);
 		}
 
 		[ScriptFunction("setBarricade")]

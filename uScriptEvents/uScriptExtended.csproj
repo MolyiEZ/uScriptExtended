@@ -33,6 +33,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Events\AnimalEvents.cs" />
+    <Compile Include="Events\VehicleEvents.cs" />
     <Compile Include="Events\ClothingEvents.cs" />
     <Compile Include="RUtil.cs" />
     <Compile Include="uScriptStructure.cs" />

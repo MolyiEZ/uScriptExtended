@@ -1432,4 +1432,52 @@ namespace uScriptEvents
 			cancel = args[2];
 		}
 	}
+
+	[ScriptEvent("onVehicleHorn", "player, vehicle, *cancel")]
+	public class OnVehicleHorn : ScriptEvent
+	{
+		public override EventInfo EventHook(out object instance)
+		{
+			instance = null;
+			return typeof(VehicleEvents).GetEvent("OnVehicleHorn", BindingFlags.Public | BindingFlags.Static);
+		}
+
+		[ScriptEventSubscription]
+		public void OnVehicleHor(Player player, InteractableVehicle vehicle, ref bool cancel)
+		{
+			var args = new ExpressionValue[]
+			{
+				ExpressionValue.CreateObject(new PlayerClass(player)),
+				ExpressionValue.CreateObject(new VehicleClass(vehicle)),
+				cancel
+			};
+
+			RunEvent(this, args);
+			cancel = args[2];
+		}
+	}
+
+	[ScriptEvent("onVehicleHeadLightsUpdated", "player, vehicle, *cancel")]
+	public class OnVehicleHeadLightsUpdated : ScriptEvent
+	{
+		public override EventInfo EventHook(out object instance)
+		{
+			instance = null;
+			return typeof(VehicleEvents).GetEvent("OnVehicleHeadLightsUpdated", BindingFlags.Public | BindingFlags.Static);
+		}
+		
+		[ScriptEventSubscription]
+		public void OnVehicleHeadLightsUpd(Player player, InteractableVehicle vehicle, ref bool cancel)
+		{
+			var args = new ExpressionValue[]
+			{
+				ExpressionValue.CreateObject(new PlayerClass(player)),
+				ExpressionValue.CreateObject(new VehicleClass(vehicle)),
+				cancel
+			};
+
+			RunEvent(this, args);
+			cancel = args[2];
+		}
+	}
 }

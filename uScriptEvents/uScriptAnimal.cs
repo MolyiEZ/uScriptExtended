@@ -13,6 +13,7 @@ using uScript.API.Attributes;
 using uScript.Core;
 using uScript.Module.Main.Classes;
 using uScript.Unturned;
+using static uScriptVehicle.VehicleLook;
 
 namespace uScriptEvents
 {
@@ -228,6 +229,169 @@ namespace uScriptEvents
 				{
 					this.Animal.transform.position = value.Vector3;
 				}
+			}
+
+			[ScriptProperty(null)]
+			public Vector3Class forward
+			{
+				get
+				{
+					return new Vector3Class(this.Animal.transform.forward);
+				}
+			}
+
+			[ScriptProperty(null)]
+			public Vector3Class backward
+			{
+				get
+				{
+					return new Vector3Class(-this.Animal.transform.forward);
+				}
+			}
+
+			[ScriptProperty(null)]
+			public Vector3Class right
+			{
+				get
+				{
+					return new Vector3Class(this.Animal.transform.right);
+				}
+			}
+
+			[ScriptProperty(null)]
+			public Vector3Class left
+			{
+				get
+				{
+					return new Vector3Class(-this.Animal.transform.right);
+				}
+			}
+
+			[ScriptProperty(null)]
+			public Vector3Class up
+			{
+				get
+				{
+					return new Vector3Class(this.Animal.transform.up);
+				}
+			}
+
+			[ScriptProperty(null)]
+			public Vector3Class down
+			{
+				get
+				{
+					return new Vector3Class(-this.Animal.transform.up);
+				}
+			}
+
+			[ScriptFunction(null)]
+			public AnimalLookClass Look(Vector3Class value)
+			{
+				return new AnimalLookClass(this.Animal, value.Vector3);
+			}
+		}
+
+		[ScriptClass("animalLook")]
+		public class AnimalLookClass
+		{
+			public Animal Animal { get; }
+			public Vector3 Value { get;  }
+
+			public AnimalLookClass(Animal animal, Vector3 value)
+			{
+				Animal = animal;
+				Value = value;
+			}
+
+			[ScriptFunction(null)]
+			public BarricadeClass GetBarricade()
+			{
+				Transform aim = this.Animal.transform;
+				if (!Physics.Raycast(aim.position, this.Value, out var hitInfo, float.PositiveInfinity, RayMasks.BLOCK_COLLISION))
+				{
+					return null;
+				}
+
+				if (!Physics.Raycast(aim.position, this.Value, out var hitInfo2, float.PositiveInfinity, 134217728) || hitInfo.transform != hitInfo2.transform)
+				{
+					return null;
+				}
+
+				if ((hitInfo2.transform.name == "Hinge" || hitInfo2.transform.name == "Left_Hinge" || hitInfo2.transform.name == "Right_Hinge") && hitInfo2.transform.parent.name == "Skeleton")
+				{
+					return new BarricadeClass(hitInfo2.transform.parent.parent);
+				}
+
+				return new BarricadeClass(hitInfo2.transform);
+			}
+
+			[ScriptFunction(null)]
+			public PlayerClass GetPlayer()
+			{
+				if (!Physics.Raycast(this.Animal.transform.position, this.Value, out var hitInfo, float.PositiveInfinity, 512))
+				{
+					return null;
+				}
+
+				Player component = hitInfo.transform.GetComponent<Player>();
+				if (!(component != null))
+				{
+					return null;
+				}
+
+				return new PlayerClass(component);
+			}
+
+			[ScriptFunction(null)]
+			public Vector3Class GetPoint()
+			{
+				if (!Physics.Raycast(this.Animal.transform.position, this.Value, out var hitInfo, float.PositiveInfinity, RayMasks.BLOCK_COLLISION))
+				{
+					return null;
+				}
+
+				return new Vector3Class(hitInfo.point);
+			}
+
+			[ScriptFunction(null)]
+			public StructureClass GetStructure()
+			{
+				Transform aim = this.Animal.transform;
+				if (!Physics.Raycast(aim.position, this.Value, out var hitInfo, float.PositiveInfinity, RayMasks.BLOCK_COLLISION))
+				{
+					return null;
+				}
+
+				if (!Physics.Raycast(aim.position, this.Value, out var hitInfo2, float.PositiveInfinity, 268435456) || hitInfo.transform != hitInfo2.transform)
+				{
+					return null;
+				}
+
+				return new StructureClass(hitInfo2.transform);
+			}
+
+			[ScriptFunction(null)]
+			public VehicleClass GetVehicle()
+			{
+				Transform aim = this.Animal.transform;
+				if (!Physics.Raycast(aim.position, this.Value, out var hitInfo, float.PositiveInfinity, RayMasks.BLOCK_COLLISION))
+				{
+					return null;
+				}
+
+				if (!Physics.Raycast(aim.position, this.Value, out var hit, float.PositiveInfinity, 67108864) || hitInfo.transform != hit.transform)
+				{
+					return null;
+				}
+
+				InteractableVehicle interactableVehicle = VehicleManager.vehicles.FirstOrDefault((InteractableVehicle v) => v.transform == hit.transform);
+				if (!(interactableVehicle != null))
+				{
+					return null;
+				}
+
+				return new VehicleClass(interactableVehicle);
 			}
 		}
 	}
