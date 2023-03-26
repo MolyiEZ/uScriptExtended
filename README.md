@@ -34,7 +34,9 @@ Event: onPlayerBrokenUpdated(player, isBroken)
 Event: onPlayerClothingEquipping(player, item, slot, *cancel)
 Event: onPlayerClothingUnequipping(player, item, slot, *cancel)
 Event: onPlayerDamagedCustom(player, killer, *cancel, *damage, cause, limb, ragdoll)
+Event: onPlayerFlagUpdated(player, flagId, flagValue)
 Event: onPlayerFoodUpdated(player, newFood)
+Event: onPlayerGroupUpdated(player, oldGroupId, oldGroupRank, newGroupId, newGroupRank)
 Event: onPlayerHealthUpdated(player, newHealth)
 Event: onPlayerJoinRequested(playerSteam, rejectionReason)
 Event: onPlayerOxygenUpdated(player, newOxygen)
@@ -49,8 +51,6 @@ Event: onPlayerTemperatureUpdated(player, temperature)
 Event: onPlayerUnequipped(player, item, *cancel)
 Event: onPlayerVirusUpdated(player, newVirus)
 Event: onPlayerWaterUpdated(player, newWater)
-
-Event: onPluginKeyTick(player, simulation, key, state)
 
 Event: onResourceDamaged(player, damage, cause, *cancel)
 
@@ -173,6 +173,7 @@ item [Class]:
     +durability            [get/set]       : uInt16
     +gun                   [get]           : gun
     +rarity	           [get]	   : string
+    +quality		   [get]	   : ushort
     
 map [Class]:
     +getKey(object value)  [get]	   : object
@@ -183,11 +184,10 @@ oven [Class]:
 
 player [Class]:
     +arrestCustom(uInt16 id, uInt16 strenght)
-    +hasEarpiece	   [get]	       : boolean
-    +isGrounded		   [get]	       : boolean
-    +isSafe		   [get]	       : boolean
-    +isRadiated		   [get]	       : boolean
-    +key(key)              [get]           : boolean 
+    +hasEarpiece	   [get]	   : boolean
+    +isGrounded		   [get]	   : boolean
+    +isSafe		   [get]	   : boolean
+    +isRadiated		   [get]	   : boolean
     +oxygen	           [get/set]	   : uInt16
     +salvageTime           [get/set]       : uInt16
     +stamina               [get/set]       : uInt16
