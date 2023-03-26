@@ -49,11 +49,6 @@ namespace ModuleEvents
 				ModuleEvents.onDamageResourceRequested.Invoke(instigatorSteamID, objectTransform, ref pendingTotalDamage, ref shouldAllow, damageOrigin);
 			};
 
-			PlayerInput.onPluginKeyTick += (Player player, uint simulation, byte key, bool state) =>
-			{
-				ModuleEvents.onPluginKeyTick.Invoke(player, simulation, key, state);
-			};
-
 			ItemManager.onTakeItemRequested += (Player player, byte x, byte y, uint instanceID, byte to_x, byte to_y, byte to_rot, byte to_page, ItemData itemData, ref bool shouldAllow) =>
 			{
 				ModuleEvents.onTakeItemRequested.Invoke(player, x, y, instanceID, to_x, to_y, to_rot, to_page, itemData, ref shouldAllow);
@@ -118,8 +113,6 @@ namespace ModuleEvents
 		public static event DamageBarricadeRequestHandler onDamageBarricade;
 
 		public static event DamageResourceRequestHandler onDamageResourceRequested;
-
-		public static event PluginKeyTickHandler onPluginKeyTick;
 
 		public static event TakeItemRequestHandler onTakeItemRequested;
 

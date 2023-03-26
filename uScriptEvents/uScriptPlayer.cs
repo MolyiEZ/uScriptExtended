@@ -78,13 +78,6 @@ namespace uScriptPlayers
 			player.Player.animator.sendGesture(EPlayerGesture.ARREST_START, true);
 		}
 
-		[ScriptFunction("get_key")]
-		public static bool getKey([ScriptInstance] ExpressionValue instance, int number)
-		{
-			if (!(instance.Data is PlayerClass player)) return false;
-			return player.Player.input.keys[number];
-		}
-
 		[ScriptFunction("get_hasEarpiece")]
 		public static bool getEarpiece([ScriptInstance] ExpressionValue instance, int number)
 		{

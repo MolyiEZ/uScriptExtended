@@ -275,30 +275,6 @@ namespace uScriptEvents
 		}
 	}
 
-	[ScriptEvent("onPluginKeyTick", "player, simulation, key, state")]
-	public class OnPlayerKeyTick : ScriptEvent
-	{
-		public override EventInfo EventHook(out object instance)
-		{
-			instance = null;
-			return typeof(ModuleEvents.ModuleEvents).GetEvent("onPluginKeyTick", BindingFlags.Public | BindingFlags.Static);
-		}
-
-		[ScriptEventSubscription]
-		public void onPlayerKey(Player player, uint simulation, byte key, bool state)
-		{
-			var args = new ExpressionValue[]
-			{
-				ExpressionValue.CreateObject(new PlayerClass(player)),
-				(double)simulation,
-				(double)key,
-				state
-			};
-
-			RunEvent(this, args);
-		}
-	}
-
 	[ScriptEvent("onPlayerUnequipped", "player, item, *cancel")]
 	public class OnPlayerUnequipped : ScriptEvent
 	{
@@ -758,6 +734,7 @@ namespace uScriptEvents
 		[ScriptEventSubscription]
 		public void onVehicleLock(InteractableVehicle vehicle, Player instigatingPlayer, ref bool allow)
 		{
+			if (instigatingPlayer == null) return;
 			var args = new ExpressionValue[]
 			{
 				ExpressionValue.CreateObject(new PlayerClass(instigatingPlayer)),
@@ -1478,6 +1455,54 @@ namespace uScriptEvents
 
 			RunEvent(this, args);
 			cancel = args[2];
+		}
+	}
+
+	[ScriptEvent("onPlayerFlagUpdated", "player, flagId, flagValue")]
+	public class OnPlayerFlagUpdated : ScriptEvent
+	{
+		public override EventInfo EventHook(out object instance)
+		{
+			instance = null;
+			return typeof(PlayerQuests).GetEvent("onAnyFlagChanged", BindingFlags.Public | BindingFlags.Static);
+		}
+
+		[ScriptEventSubscription]
+		public void OnPlayerFlagUpdate(PlayerQuests quests, PlayerQuestFlag flag)
+		{
+			var args = new ExpressionValue[]
+			{
+				ExpressionValue.CreateObject(new PlayerClass(quests.player)),
+				(double)flag.id,
+				(double)flag.value
+			};
+
+			RunEvent(this, args);
+		}
+	}
+
+	[ScriptEvent("onPlayerGroupUpdated", "player, oldGroupId, oldGroupRank, newGroupId, newGroupRank")]
+	public class OnPlayerGroupUpdated : ScriptEvent
+	{
+		public override EventInfo EventHook(out object instance)
+		{
+			instance = null;
+			return typeof(PlayerQuests).GetEvent("onGroupChanged", BindingFlags.Public | BindingFlags.Static);
+		}
+
+		[ScriptEventSubscription]
+		public void OnPlayerGroupUpdate(PlayerQuests sender, CSteamID oldGroupID, EPlayerGroupRank oldGroupRank, CSteamID newGroupID, EPlayerGroupRank newGroupRank)
+		{
+			var args = new ExpressionValue[]
+			{
+				ExpressionValue.CreateObject(new PlayerClass(sender.player)),
+				oldGroupID.ToString(),
+				oldGroupRank.ToString(),
+				newGroupID.ToString(),
+				newGroupRank.ToString()
+			};
+
+			RunEvent(this, args);
 		}
 	}
 }

@@ -320,7 +320,7 @@ namespace uScriptItems
 		public static GunClass getGun([ScriptInstance] ExpressionValue instance)
 		{
 			if (!(instance.Data is ItemClass item)) return null;
-			ItemGunAsset gun = item.Item.interactableItem.GetComponent<ItemGunAsset>();
+			ItemGunAsset gun = item.Item.GetAsset<ItemGunAsset>();
 			if (!(gun != null)) return null;
 			return new GunClass(gun);
 		}
@@ -362,6 +362,15 @@ namespace uScriptItems
 			ItemAsset asset = item.Item.GetAsset<ItemAsset>();
 			if (!(asset != null)) return null;
 			return asset.rarity.ToString();
+		}
+
+		[ScriptFunction("get_quality")]
+		public static ushort getQuality([ScriptInstance] ExpressionValue instance)
+		{
+			if (!(instance.Data is ItemClass item)) return 0;
+			ItemAsset asset = item.Item.GetAsset<ItemAsset>();
+			if (!(asset != null)) return 0;
+			return (ushort)asset.quality;
 		}
 	}
 }
