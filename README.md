@@ -62,6 +62,7 @@ Event: onSiphonVehicleRequest(player, vehicle, amount, *cancel)
 
 Event: onVehicleCarjack(player, vehicle, force, torque, *cancel)
 Event: onVehicleHeadLightsUpdated(player, vehicle, *cancel)
+Event: onVehicleHook(player, vehicle, vehicleHooked, cancel)
 Event: onVehicleHorn(player, vehicle, *cancel)
 Event: onVehicleLockpick(player, vehicle, *cancel)
 Event: onVehicleLockRequest(vehicle, *cancel)
