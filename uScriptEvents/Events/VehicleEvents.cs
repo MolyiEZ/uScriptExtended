@@ -13,9 +13,11 @@ namespace uScriptClothingEvents
 	{
 		public delegate void OnVehicleHornDelegate(Player player, InteractableVehicle vehicle, ref bool cancel);
 		public delegate void OnVehicleHeadLightsDelegate(Player player, InteractableVehicle vehicle, ref bool cancel);
+		public delegate void OnVehicleHookDelegate(Player player, InteractableVehicle vehicle, ref bool cancel);
 
 		public static event OnVehicleHornDelegate OnVehicleHorn;
 		public static event OnVehicleHeadLightsDelegate OnVehicleHeadLightsUpdated;
+		public static event OnVehicleHookDelegate OnVehicleHook;
 
 		[UsedImplicitly]
 		[HarmonyPatch]
@@ -57,6 +59,24 @@ namespace uScriptClothingEvents
 						OnVehicleHeadLightsUpdated?.Invoke(player, vehicle, ref cancel);
 					}
 				}
+				return !cancel;
+			}
+
+			[UsedImplicitly]
+			[HarmonyPatch(typeof(VehicleManager))]
+			[HarmonyPatch("ReceiveUseVehicleBonus")]
+			[HarmonyPrefix]
+			public static bool ReceiveUseVehicleBonus(in ServerInvocationContext context, byte bonusType)
+			{
+				var cancel = false;
+				Player player = context.GetPlayer();
+				if (player == null) return !cancel;
+
+				InteractableVehicle vehicle = player.movement.getVehicle();
+				if (vehicle == null || !vehicle.checkDriver(player.channel.owner.playerID.steamID)) return !cancel;
+
+				if(bonusType == 1) OnVehicleHook?.Invoke(player, vehicle, ref cancel);
+
 				return !cancel;
 			}
 		}

@@ -1505,4 +1505,28 @@ namespace uScriptEvents
 			RunEvent(this, args);
 		}
 	}
+
+	[ScriptEvent("onVehicleHook", "player, vehicle, *cancel")]
+	public class OnVehicleHook : ScriptEvent
+	{
+		public override EventInfo EventHook(out object instance)
+		{
+			instance = null;
+			return typeof(VehicleEvents).GetEvent("OnVehicleHook", BindingFlags.Public | BindingFlags.Static);
+		}
+
+		[ScriptEventSubscription]
+		public void OnVehicleH(Player player, InteractableVehicle vehicle, ref bool cancel)
+		{
+			var args = new ExpressionValue[]
+			{
+				ExpressionValue.CreateObject(new PlayerClass(player)),
+				ExpressionValue.CreateObject(new VehicleClass(vehicle)),
+				cancel
+			};
+
+			RunEvent(this, args);
+			cancel = args[2];
+		}
+	}
 }
