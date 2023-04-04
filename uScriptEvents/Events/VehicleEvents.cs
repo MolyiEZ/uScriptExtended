@@ -80,11 +80,11 @@ namespace uScriptClothingEvents
 				Player player = __instance.passengers[0].player.player;
 				if (player == null) return !cancel;
 
-				var hookedField = AccessTools.Field(typeof(InteractableVehicle), "hooked");
-				var hooked = (List<HookInfo>)hookedField.GetValue(__instance);
+				var hookedF = AccessTools.Field(typeof(InteractableVehicle), "hooked");
+				var hooked = (List<HookInfo>)hookedF.GetValue(__instance);
 
-				var grabField = AccessTools.Field(typeof(InteractableVehicle), "grab");
-				var grab = (Collider[])grabField.GetValue(__instance);
+				var grabF = AccessTools.Field(typeof(InteractableVehicle), "grab");
+				var grab = (Collider[])grabF.GetValue(__instance);
 
 				if (hooked.Count > 0) return !cancel;
 
