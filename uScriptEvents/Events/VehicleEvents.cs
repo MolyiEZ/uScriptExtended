@@ -3,9 +3,14 @@ using JetBrains.Annotations;
 using Rocket.Core.Logging;
 using SDG.NetTransport;
 using SDG.Unturned;
+using System;
+using System.Collections.Generic;
+using System.Reflection;
 using System.Runtime.Remoting.Contexts;
 using UnityEngine;
+using UnityEngine.UI;
 using uScript.Unturned;
+using uScriptPlayers;
 
 namespace uScriptClothingEvents
 {
@@ -13,7 +18,7 @@ namespace uScriptClothingEvents
 	{
 		public delegate void OnVehicleHornDelegate(Player player, InteractableVehicle vehicle, ref bool cancel);
 		public delegate void OnVehicleHeadLightsDelegate(Player player, InteractableVehicle vehicle, ref bool cancel);
-		public delegate void OnVehicleHookDelegate(Player player, InteractableVehicle vehicle, ref bool cancel);
+		public delegate void OnVehicleHookDelegate(Player player, InteractableVehicle vehicle, InteractableVehicle vehicleHooked, ref bool cancel);
 
 		public static event OnVehicleHornDelegate OnVehicleHorn;
 		public static event OnVehicleHeadLightsDelegate OnVehicleHeadLightsUpdated;
@@ -62,20 +67,36 @@ namespace uScriptClothingEvents
 				return !cancel;
 			}
 
+
 			[UsedImplicitly]
-			[HarmonyPatch(typeof(VehicleManager))]
-			[HarmonyPatch("ReceiveUseVehicleBonus")]
+			[HarmonyPatch(typeof(InteractableVehicle))]
+			[HarmonyPatch("useHook")]
 			[HarmonyPrefix]
-			public static bool ReceiveUseVehicleBonus(in ServerInvocationContext context, byte bonusType)
+			public static bool useHook(InteractableVehicle __instance)
 			{
 				var cancel = false;
-				Player player = context.GetPlayer();
+				if (__instance == null) return !cancel;
+				if (!__instance.isDriven) return !cancel;
+				Player player = __instance.passengers[0].player.player;
 				if (player == null) return !cancel;
 
-				InteractableVehicle vehicle = player.movement.getVehicle();
-				if (vehicle == null || !vehicle.checkDriver(player.channel.owner.playerID.steamID)) return !cancel;
+				var hookedField = AccessTools.Field(typeof(InteractableVehicle), "hooked");
+				var hooked = (List<HookInfo>)hookedField.GetValue(__instance);
 
-				if(bonusType == 1) OnVehicleHook?.Invoke(player, vehicle, ref cancel);
+				var grabField = AccessTools.Field(typeof(InteractableVehicle), "grab");
+				var grab = (Collider[])grabField.GetValue(__instance);
+
+				if (hooked.Count > 0) return !cancel;
+
+				int num = Physics.OverlapSphereNonAlloc(__instance.transform.position, 3f, grab, 67108864);
+				for (int i = 0; i < num; i++)
+				{
+					InteractableVehicle vehicle = DamageTool.getVehicle(grab[i].transform);
+					if (!(vehicle == null) && !(vehicle == __instance) && vehicle.isEmpty && !vehicle.isHooked && !vehicle.isExploded && vehicle.asset.engine != EEngine.TRAIN)
+					{
+						OnVehicleHook?.Invoke(player, __instance, vehicle, ref cancel);
+					}
+				}
 
 				return !cancel;
 			}
