@@ -19,10 +19,12 @@ namespace uScriptClothingEvents
 		public delegate void OnVehicleHornDelegate(Player player, InteractableVehicle vehicle, ref bool cancel);
 		public delegate void OnVehicleHeadLightsDelegate(Player player, InteractableVehicle vehicle, ref bool cancel);
 		public delegate void OnVehicleHookDelegate(Player player, InteractableVehicle vehicle, InteractableVehicle vehicleHooked, ref bool cancel);
+		public delegate void OnVehicleHookReleaseDelegate(Player player, InteractableVehicle vehicle, InteractableVehicle vehicleHooked, ref bool cancel);
 
 		public static event OnVehicleHornDelegate OnVehicleHorn;
 		public static event OnVehicleHeadLightsDelegate OnVehicleHeadLightsUpdated;
 		public static event OnVehicleHookDelegate OnVehicleHook;
+		public static event OnVehicleHookReleaseDelegate OnVehicleHookRelease;
 
 		[UsedImplicitly]
 		[HarmonyPatch]
@@ -117,6 +119,46 @@ namespace uScriptClothingEvents
 						ignoreCollisionWithVehicleMethod.Invoke(__instance, new object[] { vehicle, true });
 					}
 				}
+
+				return false;
+			}
+
+			[UsedImplicitly]
+			[HarmonyPatch(typeof(InteractableVehicle))]
+			[HarmonyPatch("clearHooked")]
+			[HarmonyPrefix]
+			public static bool clearHooked(InteractableVehicle __instance)
+			{
+				var cancel = false;
+				var hookedF = AccessTools.Field(typeof(InteractableVehicle), "hooked");
+				var hooked = (List<HookInfo>)hookedF.GetValue(__instance);
+
+				if (!__instance.isDriven)
+				{
+					hooked.Clear();
+					return false;
+				}
+				Player player = __instance.passengers[0].player.player;
+				if (player == null)
+				{
+					hooked.Clear();
+					return false;
+				}
+
+				var ignoreCollisionWithVehicleMethod = AccessTools.Method(typeof(InteractableVehicle), "ignoreCollisionWithVehicle", new[] { typeof(InteractableVehicle), typeof(bool) });
+
+				foreach (HookInfo item in hooked)
+				{
+					if (!(item.vehicle == null))
+					{
+						OnVehicleHookRelease?.Invoke(player, __instance, item.vehicle, ref cancel);
+						if (cancel) return false;
+						item.vehicle.isHooked = false;
+						ignoreCollisionWithVehicleMethod.Invoke(__instance, new object[] { item.vehicle, false });
+					}
+				}
+
+				hooked.Clear();
 
 				return false;
 			}
