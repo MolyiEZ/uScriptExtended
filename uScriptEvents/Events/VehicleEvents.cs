@@ -75,30 +75,50 @@ namespace uScriptClothingEvents
 			public static bool useHook(InteractableVehicle __instance)
 			{
 				var cancel = false;
-				if (__instance == null) return !cancel;
-				if (!__instance.isDriven) return !cancel;
+				if (!__instance.isDriven) return false;
 				Player player = __instance.passengers[0].player.player;
-				if (player == null) return !cancel;
+				if (player == null) return false;
 
 				var hookedF = AccessTools.Field(typeof(InteractableVehicle), "hooked");
 				var hooked = (List<HookInfo>)hookedF.GetValue(__instance);
 
+				var clearHookedMethod = AccessTools.Method(typeof(InteractableVehicle), "clearHooked");
+
+				if (hooked.Count > 0)
+				{
+					clearHookedMethod.Invoke(__instance, null);
+					return false;
+				}
+
 				var grabF = AccessTools.Field(typeof(InteractableVehicle), "grab");
 				var grab = (Collider[])grabF.GetValue(__instance);
 
-				if (hooked.Count > 0) return !cancel;
+				var hookF = AccessTools.Field(typeof(InteractableVehicle), "hook");
+				var hook = (Transform)hookF.GetValue(__instance);
 
-				int num = Physics.OverlapSphereNonAlloc(__instance.transform.position, 3f, grab, 67108864);
+				var ignoreCollisionWithVehicleMethod = AccessTools.Method(typeof(InteractableVehicle), "ignoreCollisionWithVehicle", new[] { typeof(InteractableVehicle), typeof(bool) });
+
+
+				int num = Physics.OverlapSphereNonAlloc(hook.position, 3f, grab, 67108864);
 				for (int i = 0; i < num; i++)
 				{
 					InteractableVehicle vehicle = DamageTool.getVehicle(grab[i].transform);
 					if (!(vehicle == null) && !(vehicle == __instance) && vehicle.isEmpty && !vehicle.isHooked && !vehicle.isExploded && vehicle.asset.engine != EEngine.TRAIN)
 					{
 						OnVehicleHook?.Invoke(player, __instance, vehicle, ref cancel);
+						if (cancel) return false;
+						HookInfo hookInfo = new HookInfo();
+						hookInfo.target = vehicle.transform;
+						hookInfo.vehicle = vehicle;
+						hookInfo.deltaPosition = hook.InverseTransformPoint(vehicle.transform.position);
+						hookInfo.deltaRotation = Quaternion.FromToRotation(hook.forward, vehicle.transform.forward);
+						hooked.Add(hookInfo);
+						vehicle.isHooked = true;
+						ignoreCollisionWithVehicleMethod.Invoke(__instance, new object[] { vehicle, true });
 					}
 				}
 
-				return !cancel;
+				return false;
 			}
 		}
 	}
