@@ -14,12 +14,7 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
-using uScript.Core;
-using uScript.Module.Main;
-using uScript.Module.Main.Classes;
 using uScript.Unturned;
-using uScriptClothingEvents;
-using static ModuleEvents.ModuleEvents;
 
 namespace ModuleEvents
 {
@@ -29,84 +24,65 @@ namespace ModuleEvents
 
 		protected override void OnModuleLoaded()
 		{
-			U.Events.OnBeforePlayerConnected += ModuleEvents.AddComponentPlayer;
+			U.Events.OnBeforePlayerConnected += AddComponentPlayer;
+			Level.onPreLevelLoaded += OnPreLevelLoaded;
 
-			harmony = new Harmony("HandCuff_Oasis");
+			harmony = new Harmony("uScriptExtended");
 			harmony.PatchAll();
 
 			BarricadeManager.onDamageBarricadeRequested += (CSteamID instigatorSteamID, Transform barricadeTransform, ref ushort pendingTotalDamage, ref bool shouldAllow, EDamageOrigin damageOrigin) =>
 			{
-				ModuleEvents.onDamageBarricade.Invoke(instigatorSteamID, barricadeTransform, ref pendingTotalDamage, ref shouldAllow, damageOrigin);
+				onDamageBarricade.Invoke(instigatorSteamID, barricadeTransform, ref pendingTotalDamage, ref shouldAllow, damageOrigin);
 			};
 
 			StructureManager.onDamageStructureRequested += (CSteamID instigatorSteamID, Transform structureTransform, ref ushort pendingTotalDamage, ref bool shouldAllow, EDamageOrigin damageOrigin) =>
 			{
-				ModuleEvents.onDamageStructure.Invoke(instigatorSteamID, structureTransform, ref pendingTotalDamage, ref shouldAllow, damageOrigin);
+				onDamageStructure.Invoke(instigatorSteamID, structureTransform, ref pendingTotalDamage, ref shouldAllow, damageOrigin);
 			};
 
 			ResourceManager.onDamageResourceRequested += (CSteamID instigatorSteamID, Transform objectTransform, ref ushort pendingTotalDamage, ref bool shouldAllow, EDamageOrigin damageOrigin) =>
 			{
-				ModuleEvents.onDamageResourceRequested.Invoke(instigatorSteamID, objectTransform, ref pendingTotalDamage, ref shouldAllow, damageOrigin);
+				onDamageResourceRequested.Invoke(instigatorSteamID, objectTransform, ref pendingTotalDamage, ref shouldAllow, damageOrigin);
 			};
 
 			ItemManager.onTakeItemRequested += (Player player, byte x, byte y, uint instanceID, byte to_x, byte to_y, byte to_rot, byte to_page, ItemData itemData, ref bool shouldAllow) =>
 			{
-				ModuleEvents.onTakeItemRequested.Invoke(player, x, y, instanceID, to_x, to_y, to_rot, to_page, itemData, ref shouldAllow);
+				onTakeItemRequested.Invoke(player, x, y, instanceID, to_x, to_y, to_rot, to_page, itemData, ref shouldAllow);
 			};
 
 			VehicleManager.onSiphonVehicleRequested += (InteractableVehicle vehicle, Player instigatingPlayer, ref bool shouldAllow, ref ushort desiredAmount) =>
 			{
-				ModuleEvents.onSiphonVehicleRequested.Invoke(vehicle, instigatingPlayer, ref shouldAllow, ref desiredAmount);
+				onSiphonVehicleRequested.Invoke(vehicle, instigatingPlayer, ref shouldAllow, ref desiredAmount);
 			};
 
 			BarricadeManager.onBarricadeSpawned += (BarricadeRegion region, BarricadeDrop drop) =>
 			{
-				ModuleEvents.onBarricadeSpawned.Invoke(region, drop);
+				onBarricadeSpawned.Invoke(region, drop);
 			};
 
 			StructureManager.onStructureSpawned += (StructureRegion region, StructureDrop drop) =>
 			{
-				ModuleEvents.onStructureSpawned.Invoke(region, drop);
-			};
-
-			LightingManager.onDayNightUpdated += (bool isDaytime) =>
-			{
-				ModuleEvents.onDayNightUpdated.Invoke(isDaytime);
-			};
-
-			LightingManager.onMoonUpdated += (bool isFullMoon) =>
-			{
-				ModuleEvents.onMoonUpdated.Invoke(isFullMoon);
-			};
-
-			LightingManager.onRainUpdated += (ELightingRain rain) =>
-			{
-				ModuleEvents.onRainUpdated.Invoke(rain);
-			};
-
-			LightingManager.onSnowUpdated += (ELightingSnow snow) =>
-			{
-				ModuleEvents.onSnowUpdated.Invoke(snow);
+				onStructureSpawned.Invoke(region, drop);
 			};
 
 			VehicleManager.onVehicleLockpicked += (InteractableVehicle vehicle, Player instigatingPlayer, ref bool allow) =>
 			{
-				ModuleEvents.onVehicleLockpicked.Invoke(vehicle, instigatingPlayer, ref allow);
+				onVehicleLockpicked.Invoke(vehicle, instigatingPlayer, ref allow);
 			};
 
 			VehicleManager.onDamageTireRequested += (CSteamID instigatorSteamID, InteractableVehicle vehicle, int tireIndex, ref bool shouldAllow, EDamageOrigin damageOrigin) =>
 			{
-				ModuleEvents.onDamageTireRequested.Invoke(instigatorSteamID, vehicle, tireIndex, ref shouldAllow, damageOrigin);
+				onDamageTireRequested.Invoke(instigatorSteamID, vehicle, tireIndex, ref shouldAllow, damageOrigin);
 			};
 
 			VehicleManager.onVehicleCarjacked += (InteractableVehicle vehicle, Player instigatingPlayer, ref bool allow, ref Vector3 force, ref Vector3 torque) =>
 			{
-				ModuleEvents.onVehicleCarjacked.Invoke(vehicle, instigatingPlayer, ref allow, ref force, ref torque);
+				onVehicleCarjacked.Invoke(vehicle, instigatingPlayer, ref allow, ref force, ref torque);
 			};
 
 			VehicleManager.onRepairVehicleRequested += (CSteamID instigatorSteamID, InteractableVehicle vehicle, ref ushort pendingTotalHealing, ref bool shouldAllow) =>
 			{
-				ModuleEvents.onRepairVehicleRequested.Invoke(instigatorSteamID, vehicle, ref pendingTotalHealing, ref shouldAllow);
+				onRepairVehicleRequested.Invoke(instigatorSteamID, vehicle, ref pendingTotalHealing, ref shouldAllow);
 			};
 		}
 
@@ -144,35 +120,58 @@ namespace ModuleEvents
 		{
 			player.Player.gameObject.AddComponent<InternalEvents>();
 		}
+
+		private static void OnPreLevelLoaded(int level)
+		{
+			LightingManager.onDayNightUpdated += (bool isDaytime) =>
+			{
+				onDayNightUpdated.Invoke(isDaytime);
+			};
+
+			LightingManager.onMoonUpdated += (bool isFullMoon) =>
+			{
+				onMoonUpdated.Invoke(isFullMoon);
+			};
+
+			LightingManager.onRainUpdated += (ELightingRain rain) =>
+			{
+				onRainUpdated.Invoke(rain);
+			};
+
+			LightingManager.onSnowUpdated += (ELightingSnow snow) =>
+			{
+				onSnowUpdated.Invoke(snow);
+			};
+		}
 	}
 
 	public class InternalEvents : MonoBehaviour
 	{
-		public static event InternalEvents.DequipRequested OnDequipRequested;
+		public static event DequipRequested OnDequipRequested;
 
-		public static event InternalEvents.HealthUpdated OnHealthUpdated;
+		public static event HealthUpdated OnHealthUpdated;
 
-		public static event InternalEvents.FoodUpdated OnFoodUpdated;
+		public static event FoodUpdated OnFoodUpdated;
 
-		public static event InternalEvents.WaterUpdated OnWaterUpdated;
+		public static event WaterUpdated OnWaterUpdated;
 
-		public static event InternalEvents.VirusUpdated OnVirusUpdated;
+		public static event VirusUpdated OnVirusUpdated;
 
-		public static event InternalEvents.StaminaUpdated OnStaminaUpdated;
+		public static event StaminaUpdated OnStaminaUpdated;
 
-		public static event InternalEvents.VisionUpdated OnVisionUpdated;
+		public static event VisionUpdated OnVisionUpdated;
 
-		public static event InternalEvents.OxygenUpdated OnOxygenUpdated;
+		public static event OxygenUpdated OnOxygenUpdated;
 
-		public static event InternalEvents.BleedingUpdated OnBleedingUpdated;
+		public static event BleedingUpdated OnBleedingUpdated;
 
-		public static event InternalEvents.BrokenUpdated OnBrokenUpdated;
+		public static event BrokenUpdated OnBrokenUpdated;
 
-		public static event InternalEvents.TemperatureUpdated OnTemperatureUpdated;
+		public static event TemperatureUpdated OnTemperatureUpdated;
 
-		public static event InternalEvents.SafetyUpdated OnSafetyUpdated;
+		public static event SafetyUpdated OnSafetyUpdated;
 
-		public static event InternalEvents.RadiationUpdated OnRadiationUpdated;
+		public static event RadiationUpdated OnRadiationUpdated;
 
 		private void Awake()
 		{

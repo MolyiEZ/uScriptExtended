@@ -1,18 +1,19 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using HarmonyLib;
 using SDG.Unturned;
 using Steamworks; 
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
-using System.Xml.Linq;
 using UnityEngine;
 using uScript.API.Attributes;
 using uScript.Core;
 using uScript.Module.Main.Classes;
 using uScript.Unturned;
+using uScriptExtended;
 using static uScriptVehicle.VehicleLook;
 
 namespace uScriptEvents
@@ -39,67 +40,43 @@ namespace uScriptEvents
 			}
 
 			[ScriptFunction(null)]
-			public void moveTo(Vector3Class position)
-			{
-				this.Animal.alertGoToPoint(position.Vector3, true);
-			}
+			public void moveTo(Vector3Class position) => this.Animal.alertGoToPoint(position.Vector3, true);
 
 			[ScriptFunction(null)]
-			public void runFrom(Vector3Class position)
-			{
-				this.Animal.alertRunAwayFromPoint(position.Vector3, true);
-			}
+			public void runFrom(Vector3Class position) => this.Animal.alertRunAwayFromPoint(position.Vector3, true);
 
 			[ScriptFunction(null)]
-			public void startle()
-			{
-				AnimalManager.sendAnimalStartle(this.Animal);
-			}
+			public void startle() => AnimalManager.sendAnimalStartle(this.Animal);
 
 			[ScriptFunction(null)]
 			public void damage(ushort amount, bool dropLoot = true, string ragdoll = "NONE")
 			{
 				EPlayerKill playerKill;
 				uint xp;
-				if(ragdolls.TryGetValue(ragdoll, out ERagdollEffect ragdollEff))
-				{
-					Animal.askDamage(amount, this.Animal.transform.position, out playerKill, out xp, true, dropLoot, ragdollEff);
-				}
-				else
-				{
-					Rocket.Core.Logging.Logger.LogWarning("uScriptExtended module from uScript => Ragdoll must be 'NONE', 'BRONZE', 'GOLD', 'SILVER', or 'ZERO'.");
-				}
+				if(ragdolls.TryGetValue(ragdoll, out ERagdollEffect ragdollEff)) Animal.askDamage(amount, this.Animal.transform.position, out playerKill, out xp, true, dropLoot, ragdollEff);
+				else Rocket.Core.Logging.Logger.LogWarning("uScriptExtended module from uScript => Ragdoll must be 'NONE', 'BRONZE', 'GOLD', 'SILVER', or 'ZERO'.");
 			}
 
 			[ScriptFunction(null)]
 			public void kill(string ragdoll = "NONE")
 			{
-				if (ragdolls.TryGetValue(ragdoll, out ERagdollEffect ragdollEff))
-				{
-					AnimalManager.sendAnimalDead(this.Animal, this.Animal.transform.position, ragdollEff);
-				}
-				else
-				{
-					Rocket.Core.Logging.Logger.LogWarning("uScriptExtended module from uScript => Ragdoll must be 'NONE', 'BRONZE', 'GOLD', 'SILVER', or 'ZERO'.");
-				}
+				if (ragdolls.TryGetValue(ragdoll, out ERagdollEffect ragdollEff)) AnimalManager.sendAnimalDead(this.Animal, this.Animal.transform.position, ragdollEff);
+				else Rocket.Core.Logging.Logger.LogWarning("uScriptExtended module from uScript => Ragdoll must be 'NONE', 'BRONZE', 'GOLD', 'SILVER', or 'ZERO'.");
 			}
 
 			[ScriptFunction(null)]
-			public void dropLoot()
-			{
-				AnimalManager.dropLoot(this.Animal);
-			}
+			public void dropLoot() => AnimalManager.dropLoot(this.Animal);
 
 			[ScriptProperty(null)]
 			public bool isAttacking
 			{
 				get
 				{
-					return Convert.ToBoolean(ReflectionUtil.ReflectionUtil.getValue("isAttacking", this.Animal));
+					return Convert.ToBoolean(RUtil.getValue("isAttacking", typeof(Animal), this.Animal));
 				}
 				set
 				{
-					ReflectionUtil.ReflectionUtil.setValue("isAttacking", value, this.Animal);
+					RUtil.setValue("isAttacking", typeof(Animal), this.Animal, value);
 				}
 			}
 
@@ -108,11 +85,11 @@ namespace uScriptEvents
 			{
 				get
 				{
-					return Convert.ToBoolean(ReflectionUtil.ReflectionUtil.getValue("isMoving", this.Animal));
+					return Convert.ToBoolean(RUtil.getValue("isMoving", typeof(Animal), this.Animal));
 				}
 				set
 				{
-					ReflectionUtil.ReflectionUtil.setValue("isMoving", value, this.Animal);
+					RUtil.setValue("isMoving", typeof(Animal), this.Animal, value);
 				}
 			}
 
@@ -121,11 +98,11 @@ namespace uScriptEvents
 			{
 				get
 				{
-					return Convert.ToBoolean(ReflectionUtil.ReflectionUtil.getValue("isRunning", this.Animal));
+					return Convert.ToBoolean(RUtil.getValue("isRunning", typeof(Animal), this.Animal));
 				}
 				set
 				{
-					ReflectionUtil.ReflectionUtil.setValue("isRunning", value, this.Animal);
+					RUtil.setValue("isRunning", typeof(Animal), this.Animal, value);
 				}
 			}
 
@@ -134,11 +111,11 @@ namespace uScriptEvents
 			{
 				get
 				{
-					return Convert.ToBoolean(ReflectionUtil.ReflectionUtil.getValue("isWandering", this.Animal));
+					return Convert.ToBoolean(RUtil.getValue("isWandering", typeof(Animal), this.Animal));
 				}
 				set
 				{
-					ReflectionUtil.ReflectionUtil.setValue("isWandering", value, this.Animal);
+					RUtil.setValue("isWandering", typeof(Animal), this.Animal, value);
 				}
 			}
 
@@ -151,7 +128,7 @@ namespace uScriptEvents
 				}
 				set 
 				{
-					ReflectionUtil.ReflectionUtil.setValue("_isFleeing", value, this.Animal);
+					RUtil.setValue("_isFleeing", typeof(Animal), this.Animal, value);
 				}
 			}
 
@@ -164,7 +141,7 @@ namespace uScriptEvents
 				}
 				set
 				{
-					ReflectionUtil.ReflectionUtil.setValue("isHunting", value, this.Animal);
+					RUtil.setValue("isHunting", typeof(Animal), this.Animal, value);
 				}
 				
 			}
@@ -187,7 +164,7 @@ namespace uScriptEvents
 				}
 				set 
 				{
-					ReflectionUtil.ReflectionUtil.setValue("health", value, this.Animal);
+					RUtil.setValue("health", typeof(Animal), this.Animal, value);
 				}
 			}
 

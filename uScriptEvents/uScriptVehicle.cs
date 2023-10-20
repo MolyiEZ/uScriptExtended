@@ -131,161 +131,161 @@ namespace uScriptVehicle
 		[ScriptFunction("look")]
 		public static VehicleLookClass getLook([ScriptInstance] ExpressionValue instance, Vector3Class value)
 		{
-			if (!(instance.Data is VehicleClass vehicle)) return null;
+			if (instance.Data is not VehicleClass vehicle) return null;
 			return new VehicleLookClass(vehicle.Vehicle, value.Vector3);
 		}
 
 		[ScriptFunction("enter")]
 		public static void enterVehicle([ScriptInstance] ExpressionValue instance, PlayerClass player)
 		{
-			if (!(instance.Data is VehicleClass vehicle)) return;
+			if (instance.Data is not VehicleClass vehicle) return;
 			VehicleManager.ServerForcePassengerIntoVehicle(player.Player, vehicle.Vehicle);
 		}
 
 		[ScriptFunction("get_isDrowned")]
 		public static bool getIsDrowned([ScriptInstance] ExpressionValue instance)
 		{
-			if (!(instance.Data is VehicleClass vehicle)) return false;
+			if (instance.Data is not VehicleClass vehicle) return false;
 			return vehicle.Vehicle.isDrowned;
 		}
 
 		[ScriptFunction("get_isBatteryFull")]
 		public static bool getisBatteryFull([ScriptInstance] ExpressionValue instance)
 		{
-			if (!(instance.Data is VehicleClass vehicle)) return false;
+			if (instance.Data is not VehicleClass vehicle) return false;
 			return vehicle.Vehicle.isBatteryFull;
 		}
 
 		[ScriptFunction("get_isBatteryReplaceable")]
 		public static bool getisBatteryReplaceable([ScriptInstance] ExpressionValue instance)
 		{
-			if (!(instance.Data is VehicleClass vehicle)) return false;
+			if (instance.Data is not VehicleClass vehicle) return false;
 			return vehicle.Vehicle.isBatteryReplaceable;
 		}
 
 		[ScriptFunction("get_isEmpty")]
 		public static bool getisEmpty([ScriptInstance] ExpressionValue instance)
 		{
-			if (!(instance.Data is VehicleClass vehicle)) return false;
+			if (instance.Data is not VehicleClass vehicle) return false;
 			return vehicle.Vehicle.isEmpty;
 		}
 
 		[ScriptFunction("get_isEngineOn")]
 		public static bool getisEngineOn([ScriptInstance] ExpressionValue instance)
 		{
-			if (!(instance.Data is VehicleClass vehicle)) return false;
+			if (instance.Data is not VehicleClass vehicle) return false;
 			return vehicle.Vehicle.isEngineOn;
 		}
 
 		[ScriptFunction("get_isEnginePowered")]
 		public static bool getisEnginePowered([ScriptInstance] ExpressionValue instance)
 		{
-			if (!(instance.Data is VehicleClass vehicle)) return false;
+			if (instance.Data is not VehicleClass vehicle) return false;
 			return vehicle.Vehicle.isEnginePowered;
 		}
 
 		[ScriptFunction("get_isExitable")]
 		public static bool getisExitable([ScriptInstance] ExpressionValue instance)
 		{
-			if (!(instance.Data is VehicleClass vehicle)) return false;
+			if (instance.Data is not VehicleClass vehicle) return false;
 			return vehicle.Vehicle.isExitable;
 		}
 
 		[ScriptFunction("get_isInsideNoDamageZone")]
 		public static bool getisInsideNoDamageZone([ScriptInstance] ExpressionValue instance)
 		{
-			if (!(instance.Data is VehicleClass vehicle)) return false;
+			if (instance.Data is not VehicleClass vehicle) return false;
 			return vehicle.Vehicle.isInsideNoDamageZone;
 		}
 
 		[ScriptFunction("get_isInsideSafezone")]
 		public static bool getisInsideSafezone([ScriptInstance] ExpressionValue instance)
 		{
-			if (!(instance.Data is VehicleClass vehicle)) return false;
+			if (instance.Data is not VehicleClass vehicle) return false;
 			return vehicle.Vehicle.isInsideSafezone;
 		}
 
 		[ScriptFunction("get_isRefillable")]
 		public static bool getisRefillable([ScriptInstance] ExpressionValue instance)
 		{
-			if (!(instance.Data is VehicleClass vehicle)) return false;
+			if (instance.Data is not VehicleClass vehicle) return false;
 			return vehicle.Vehicle.isRefillable;
 		}
 
 		[ScriptFunction("get_isRepaired")]
 		public static bool getisRepaired([ScriptInstance] ExpressionValue instance)
 		{
-			if (!(instance.Data is VehicleClass vehicle)) return false;
+			if (instance.Data is not VehicleClass vehicle) return false;
 			return vehicle.Vehicle.isRepaired;
 		}
 
 		[ScriptFunction("get_isSiphonable")]
 		public static bool getisSiphonable([ScriptInstance] ExpressionValue instance)
 		{
-			if (!(instance.Data is VehicleClass vehicle)) return false;
+			if (instance.Data is not VehicleClass vehicle) return false;
 			return vehicle.Vehicle.isSiphonable;
 		}
 
 		[ScriptFunction("get_isSkinned")]
 		public static bool getisSkinned([ScriptInstance] ExpressionValue instance)
 		{
-			if (!(instance.Data is VehicleClass vehicle)) return false;
+			if (instance.Data is not VehicleClass vehicle) return false;
 			return vehicle.Vehicle.isSkinned;
 		}
 
 		[ScriptFunction("get_isTireReplaceable")]
 		public static bool getisTireReplaceable([ScriptInstance] ExpressionValue instance)
 		{
-			if (!(instance.Data is VehicleClass vehicle)) return false;
+			if (instance.Data is not VehicleClass vehicle) return false;
 			return vehicle.Vehicle.isTireReplaceable;
 		}
 
 		[ScriptFunction("get_isUnderwater")]
 		public static bool getisUnderwater([ScriptInstance] ExpressionValue instance)
 		{
-			if (!(instance.Data is VehicleClass vehicle)) return false;
+			if (instance.Data is not VehicleClass vehicle) return false;
 			return vehicle.Vehicle.isUnderwater;
 		}
 
 		[ScriptFunction("get_forward")]
 		public static Vector3Class getForward([ScriptInstance] ExpressionValue instance)
 		{
-			if (!(instance.Data is VehicleClass vehicle)) return null;
+			if (instance.Data is not VehicleClass vehicle) return null;
 			return new Vector3Class(vehicle.Vehicle.transform.forward);
 		}
 
 		[ScriptFunction("get_backward")]
 		public static Vector3Class getBackward([ScriptInstance] ExpressionValue instance)
 		{
-			if (!(instance.Data is VehicleClass vehicle)) return null;
+			if (instance.Data is not VehicleClass vehicle) return null;
 			return new Vector3Class(-vehicle.Vehicle.transform.forward);
 		}
 
 		[ScriptFunction("get_right")]
 		public static Vector3Class getRight([ScriptInstance] ExpressionValue instance)
 		{
-			if (!(instance.Data is VehicleClass vehicle)) return null;
+			if (instance.Data is not VehicleClass vehicle) return null;
 			return new Vector3Class(vehicle.Vehicle.transform.right);
 		}
 
 		[ScriptFunction("get_left")]
 		public static Vector3Class getLeft([ScriptInstance] ExpressionValue instance)
 		{
-			if (!(instance.Data is VehicleClass vehicle)) return null;
+			if (instance.Data is not VehicleClass vehicle) return null;
 			return new Vector3Class(-vehicle.Vehicle.transform.right);
 		}
 
 		[ScriptFunction("get_up")]
 		public static Vector3Class getUp([ScriptInstance] ExpressionValue instance)
 		{
-			if (!(instance.Data is VehicleClass vehicle)) return null;
+			if (instance.Data is not VehicleClass vehicle) return null;
 			return new Vector3Class(vehicle.Vehicle.transform.up);
 		}
 
 		[ScriptFunction("get_down")]
 		public static Vector3Class getDown([ScriptInstance] ExpressionValue instance)
 		{
-			if (!(instance.Data is VehicleClass vehicle)) return null;
+			if (instance.Data is not VehicleClass vehicle) return null;
 			return new Vector3Class(-vehicle.Vehicle.transform.up);
 		}
 	}

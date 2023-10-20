@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json.Converters;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 using uScript.API.Attributes;
 using uScript.Core;
 
@@ -11,7 +10,7 @@ namespace uScriptEvents
 		[ScriptFunction("isMatch")]
 		public static bool isMatch([ScriptInstance] ExpressionValue instance, string value)
 		{
-			if (!(instance.Data is string str)) return false;
+			if (instance.Data is not string str) return false;
 			return Regex.IsMatch(str, value);
 		}
 	}

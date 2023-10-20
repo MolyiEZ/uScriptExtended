@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json.Linq;
-using SDG.Unturned;
+﻿using SDG.Unturned;
 using Steamworks; 
 using System;
 using System.Collections.Generic;
@@ -8,13 +7,13 @@ using System.Net.Sockets;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using System.Xml.Linq;
 using UnityEngine;
 using uScript.API.Attributes;
 using uScript.Core;
 using uScript.Module.Main.Classes;
 using uScript.Module.Main.Modules;
 using uScript.Unturned;
+using uScriptExtended;
 
 namespace uScriptEvents
 {
@@ -140,7 +139,7 @@ namespace uScriptEvents
 				}
 				set
 				{
-					ReflectionUtil.ReflectionUtil.setValue("health", value, this.Zombie);
+					RUtil.setValue("health", typeof(Zombie), this.Zombie, value);
 				}
 			}
 
@@ -153,14 +152,8 @@ namespace uScriptEvents
 			[ScriptFunction(null)]
 			public void spawnZombie(Vector3Class position, string speciality = "NONE", float angle = 0f)
 			{
-				if (specialityOptions.TryGetValue(speciality, out EZombieSpeciality zombieType))
-				{
-					ZombieManager.sendZombieAlive(this.Zombie, 1, (byte)zombieType, this.Zombie.shirt, this.Zombie.pants, this.Zombie.hat, this.Zombie.gear, position.Vector3, (byte)angle);
-				}
-				else
-				{
-					Rocket.Core.Logging.Logger.LogWarning("uScriptExtended module from uScript => Speciality must be one of the valid options (See GitHub Explanation in documentation).");
-				}
+				if (specialityOptions.TryGetValue(speciality, out EZombieSpeciality zombieType)) ZombieManager.sendZombieAlive(this.Zombie, 1, (byte)zombieType, this.Zombie.shirt, this.Zombie.pants, this.Zombie.hat, this.Zombie.gear, position.Vector3, (byte)angle);
+				else Rocket.Core.Logging.Logger.LogWarning("uScriptExtended module from uScript => Speciality must be one of the valid options (See GitHub Explanation in documentation).");
 			}
 
 
@@ -173,28 +166,16 @@ namespace uScriptEvents
 				}
 				set
 				{
-					if (specialityOptions.TryGetValue(value, out EZombieSpeciality speciality))
-					{
-						ZombieManager.sendZombieSpeciality(this.Zombie, speciality);
-					}
-					else
-					{
-						Rocket.Core.Logging.Logger.LogWarning("uScriptExtended module from uScript => Speciality must be one of the valid options (See GitHub Explanation in documentation).");
-					}
+					if (specialityOptions.TryGetValue(value, out EZombieSpeciality speciality)) ZombieManager.sendZombieSpeciality(this.Zombie, speciality);
+					else Rocket.Core.Logging.Logger.LogWarning("uScriptExtended module from uScript => Speciality must be one of the valid options (See GitHub Explanation in documentation).");
 				}
 			}
 
 			[ScriptFunction(null)]
 			public void Kill(string ragdoll = "NONE")
 			{
-				if (ragdolls.TryGetValue(ragdoll, out ERagdollEffect ragdollEff))
-				{
-					ZombieManager.sendZombieDead(this.Zombie, this.Zombie.transform.position, ragdollEff);
-				}
-				else
-				{
-					Rocket.Core.Logging.Logger.LogWarning("uScriptExtended module from uScript => Ragdoll must be 'NONE', 'BRONZE', 'GOLD', 'SILVER', or 'ZERO'.");
-				}
+				if (ragdolls.TryGetValue(ragdoll, out ERagdollEffect ragdollEff)) ZombieManager.sendZombieDead(this.Zombie, this.Zombie.transform.position, ragdollEff);
+				else Rocket.Core.Logging.Logger.LogWarning("uScriptExtended module from uScript => Ragdoll must be 'NONE', 'BRONZE', 'GOLD', 'SILVER', or 'ZERO'.");
 			}
 
 			[ScriptFunction(null)]
@@ -202,58 +183,31 @@ namespace uScriptEvents
 			{
 				EPlayerKill playerKill;
 				uint xp;
-				if (ragdolls.TryGetValue(ragdoll, out ERagdollEffect ragdollEff))
-				{
-					this.Zombie.askDamage(amount, this.Zombie.transform.position, out playerKill, out xp, true, dropLoot, EZombieStunOverride.None, ragdollEff);
-				}
-				else
-				{
-					Rocket.Core.Logging.Logger.LogWarning("uScriptExtended module from uScript => Ragdoll must be 'NONE', 'BRONZE', 'GOLD', 'SILVER', or 'ZERO'.");
-				}
+				if (ragdolls.TryGetValue(ragdoll, out ERagdollEffect ragdollEff)) this.Zombie.askDamage(amount, this.Zombie.transform.position, out playerKill, out xp, true, dropLoot, EZombieStunOverride.None, ragdollEff);
+				else Rocket.Core.Logging.Logger.LogWarning("uScriptExtended module from uScript => Ragdoll must be 'NONE', 'BRONZE', 'GOLD', 'SILVER', or 'ZERO'.");
 			}
 
 
 			[ScriptFunction(null)]
-			public void acid(Vector3Class origin, Vector3Class direction)
-			{
-				ZombieManager.sendZombieAcid(this.Zombie, origin.Vector3, direction.Vector3);
-			}
+			public void acid(Vector3Class origin, Vector3Class direction) => ZombieManager.sendZombieAcid(this.Zombie, origin.Vector3, direction.Vector3);
 
 			[ScriptFunction(null)]
-			public void breath()
-			{
-				ZombieManager.sendZombieBreath(this.Zombie);
-			}
+			public void breath() => ZombieManager.sendZombieBreath(this.Zombie);
 
 			[ScriptFunction(null)]
-			public void charge()
-			{
-				ZombieManager.sendZombieCharge(this.Zombie);
-			}
+			public void charge() => ZombieManager.sendZombieCharge(this.Zombie);
 
 			[ScriptFunction(null)]
-			public void spark(Vector3Class target)
-			{
-				ZombieManager.sendZombieSpark(this.Zombie, target.Vector3);
-			}
+			public void spark(Vector3Class target) => ZombieManager.sendZombieSpark(this.Zombie, target.Vector3);
 
 			[ScriptFunction(null)]
-			public void spit()
-			{
-				ZombieManager.sendZombieSpit(this.Zombie);
-			}
+			public void spit() => ZombieManager.sendZombieSpit(this.Zombie);
 
 			[ScriptFunction(null)]
-			public void stomp()
-			{
-				ZombieManager.sendZombieStomp(this.Zombie);
-			}
+			public void stomp() => ZombieManager.sendZombieStomp(this.Zombie);
 
 			[ScriptFunction(null)]
-			public void Throw()
-			{
-				ZombieManager.sendZombieThrow(this.Zombie);
-			}
+			public void Throw() => ZombieManager.sendZombieThrow(this.Zombie);
 
 			[ScriptProperty(null)]
 			public Vector3Class position

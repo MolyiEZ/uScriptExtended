@@ -319,7 +319,7 @@ namespace uScriptItems
 		[ScriptFunction("get_gun")]
 		public static GunClass getGun([ScriptInstance] ExpressionValue instance)
 		{
-			if (!(instance.Data is ItemClass item)) return null;
+			if (instance.Data is not ItemClass item) return null;
 			ItemGunAsset gun = item.Item.GetAsset<ItemGunAsset>();
 			if (!(gun != null)) return null;
 			return new GunClass(gun);
@@ -328,7 +328,7 @@ namespace uScriptItems
 		[ScriptFunction("get_consumeable")]
 		public static ConsumeableClass getConsumeable([ScriptInstance] ExpressionValue instance)
 		{
-			if (!(instance.Data is ItemClass item)) return null;
+			if (instance.Data is not ItemClass item) return null;
 			ItemConsumeableAsset consumeable = item.Item.GetAsset<ItemConsumeableAsset>();
 			if (!(consumeable != null)) return null;
 			return new ConsumeableClass(consumeable);
@@ -337,39 +337,39 @@ namespace uScriptItems
 		[ScriptFunction("get_description")]
 		public static string getDescription([ScriptInstance] ExpressionValue instance)
 		{
-			if (!(instance.Data is ItemClass item)) return null;
+			if (instance.Data is not ItemClass item) return null;
 			return ((ItemAsset)Assets.find(EAssetType.ITEM, item.Id))?.itemDescription ?? "Unknown";
 		}
 
 		[ScriptFunction("get_durability")]
 		public static ushort getDurability([ScriptInstance] ExpressionValue instance)
 		{
-			if (!(instance.Data is ItemClass item)) return 0;
+			if (instance.Data is not ItemClass item) return 0;
 			return item.Item.item.durability;
 		}
 
 		[ScriptFunction("set_durability")]
 		public static void setDurability([ScriptInstance] ExpressionValue instance, ushort value)
 		{
-			if (!(instance.Data is ItemClass item)) return;
+			if (instance.Data is not ItemClass item) return;
 			item.Item.item.durability = (byte)value;
 		}
 
 		[ScriptFunction("get_rarity")]
 		public static string getRarity([ScriptInstance] ExpressionValue instance)
 		{
-			if (!(instance.Data is ItemClass item)) return null;
+			if (instance.Data is not ItemClass item) return null;
 			ItemAsset asset = item.Item.GetAsset<ItemAsset>();
-			if (!(asset != null)) return null;
+			if (asset == null) return null;
 			return asset.rarity.ToString();
 		}
 
 		[ScriptFunction("get_quality")]
 		public static ushort getQuality([ScriptInstance] ExpressionValue instance)
 		{
-			if (!(instance.Data is ItemClass item)) return 0;
-			ItemAsset asset = item.Item.GetAsset<ItemAsset>();
-			if (!(asset != null)) return 0;
+			if (instance.Data is not ItemClass item) return 0;
+			ItemAsset asset = item.Item.GetAsset();
+			if (asset == null) return 0;
 			return (ushort)asset.quality;
 		}
 	}

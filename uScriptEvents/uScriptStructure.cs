@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json.Linq;
-using Rocket.Unturned.Events;
+﻿using Rocket.Unturned.Events;
 using SDG.Framework.Devkit.Interactable;
 using SDG.Unturned;
 using Steamworks;
@@ -55,7 +54,7 @@ namespace uScriptStructure
 		[ScriptFunction("get_anglex")]
 		public static float anglex([ScriptInstance] ExpressionValue instance)
 		{
-			if (!(instance.Data is StructureClass structure)) return 0;
+			if (instance.Data is not StructureClass structure) return 0;
 			StructureDrop structureDrop = StructureManager.FindStructureByRootTransform(structure.StructureTransform);
 			return MeasurementTool.byteToAngle(structureDrop.GetServersideData().angle_x);
 		}
@@ -63,7 +62,7 @@ namespace uScriptStructure
 		[ScriptFunction("get_angley")]
 		public static float angley([ScriptInstance] ExpressionValue instance)
 		{
-			if (!(instance.Data is StructureClass structure)) return 0;
+			if (instance.Data is not StructureClass structure) return 0;
 			StructureDrop structureDrop = StructureManager.FindStructureByRootTransform(structure.StructureTransform);
 			return MeasurementTool.byteToAngle(structureDrop.GetServersideData().angle_y);
 		}
@@ -71,7 +70,7 @@ namespace uScriptStructure
 		[ScriptFunction("get_anglez")]
 		public static float anglez([ScriptInstance] ExpressionValue instance)
 		{
-			if (!(instance.Data is StructureClass structure)) return 0;
+			if (instance.Data is not StructureClass structure) return 0;
 			StructureDrop structureDrop = StructureManager.FindStructureByRootTransform(structure.StructureTransform);
 			return MeasurementTool.byteToAngle(structureDrop.GetServersideData().angle_z);
 		}

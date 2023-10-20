@@ -218,10 +218,7 @@ namespace uScriptEvents
 
 			RunEvent(this, args);
 
-			if (rejectionReasons.ContainsKey(args[1].ToString()))
-			{
-				rejectionReason = rejectionReasons[args[1].ToString()];
-			}
+			if (rejectionReasons.ContainsKey(args[1].ToString())) rejectionReason = rejectionReasons[args[1].ToString()];
 		}
 	}
 
@@ -264,13 +261,13 @@ namespace uScriptEvents
 			var args = new ExpressionValue[]
 			{
 				ExpressionValue.CreateObject(new PlayerClass(PlayerTool.getPlayer(instigatorSteamID))),
-				(double)pendingTotalDamage,
+				pendingTotalDamage,
 				damageOrigin.ToString(),
 				!shouldAllow
 			};
 
 			RunEvent(this, args);
-			pendingTotalDamage = (ushort)Convert.ToInt16((double)args[1]);
+			pendingTotalDamage = (ushort)args[1];
 			shouldAllow = !args[3];
 		}
 	}
@@ -1089,7 +1086,7 @@ namespace uScriptEvents
 		}
 	}
 
-	[ScriptEvent("onPlayerDamagedCustom", "player, killer, *cancel, *damage, cause, limb, ragdoll")]
+	[ScriptEvent("onPlayerDamagedCustom", "player, killer, *cancel, *damage, cause, limb, *ragdoll")]
 	public class OnPlayerDamagedCustom : ScriptEvent
 	{
 		public override EventInfo EventHook(out object instance)
@@ -1104,7 +1101,7 @@ namespace uScriptEvents
 			{"BRONZE", ERagdollEffect.BRONZE},
 			{"SILVER", ERagdollEffect.SILVER},
 			{"GOLD", ERagdollEffect.GOLD},
-			{"ZERO", ERagdollEffect.ZERO_KELVIN},
+			{"ZERO_KELVIN", ERagdollEffect.ZERO_KELVIN},
 		};
 
 		[ScriptEventSubscription]
@@ -1112,7 +1109,7 @@ namespace uScriptEvents
 		{
 
 			Player player = PlayerTool.getPlayer(parameters.killer);
-			var ragdoll = "NONE";
+			var ragdoll = parameters.ragdollEffect.ToString();
 
 			var args = new ExpressionValue[]
 			{
@@ -1129,18 +1126,12 @@ namespace uScriptEvents
 			shouldAllow = !args[2];
 			parameters.damage = (float)(double)args[3];
 
-			if (ragdolls.ContainsKey(args[6].ToString()))
-			{
-				parameters.ragdollEffect = ragdolls[args[6].ToString()];
-			}
-			else
-			{
-				Rocket.Core.Logging.Logger.LogWarning("uScriptExtended module from uScript => Ragdoll must be 'NONE', 'BRONZE', 'GOLD', 'SILVER', or 'ZERO'.");
-			}
+			if (ragdolls.ContainsKey(args[6].ToString())) parameters.ragdollEffect = ragdolls[args[6].ToString()];
+			else Rocket.Core.Logging.Logger.LogWarning("uScriptExtended module from uScript => Ragdoll must be 'NONE', 'BRONZE', 'GOLD', 'SILVER', or 'ZERO'.");
 		}
 	}
 
-	[ScriptEvent("onAnimalDamaged", "animal, killer, *cancel, *damage, limb, ragdoll")]
+	[ScriptEvent("onAnimalDamaged", "animal, killer, *cancel, *damage, limb, *ragdoll")]
 	public class OnAnimalDamaged : ScriptEvent
 	{
 		public override EventInfo EventHook(out object instance)
@@ -1155,7 +1146,7 @@ namespace uScriptEvents
 			{"BRONZE", ERagdollEffect.BRONZE},
 			{"SILVER", ERagdollEffect.SILVER},
 			{"GOLD", ERagdollEffect.GOLD},
-			{"ZERO", ERagdollEffect.ZERO_KELVIN},
+			{"ZERO_KELVIN", ERagdollEffect.ZERO_KELVIN},
 		};
 
 		[ScriptEventSubscription]
@@ -1166,7 +1157,7 @@ namespace uScriptEvents
 			{
 				killer = player;
 			}
-			var ragdoll = "NONE";
+			var ragdoll = parameters.ragdollEffect.ToString();
 
 			var args = new ExpressionValue[]
 			{
@@ -1182,18 +1173,12 @@ namespace uScriptEvents
 			shouldAllow = !args[2];
 			parameters.damage = (float)(double)args[3];
 
-			if (ragdolls.ContainsKey(args[5].ToString()))
-			{
-				parameters.ragdollEffect = ragdolls[args[5].ToString()];
-			}
-			else
-			{
-				Rocket.Core.Logging.Logger.LogWarning("uScriptExtended module from uScript => Ragdoll must be 'NONE', 'BRONZE', 'GOLD', 'SILVER', or 'ZERO'.");
-			}
+			if (ragdolls.ContainsKey(args[5].ToString())) parameters.ragdollEffect = ragdolls[args[5].ToString()];
+			else Rocket.Core.Logging.Logger.LogWarning("uScriptExtended module from uScript => Ragdoll must be 'NONE', 'BRONZE', 'GOLD', 'SILVER', or 'ZERO'.");
 		}
 	}
 
-	[ScriptEvent("onZombieDamaged", "zombie, killer, *cancel, *damage, limb, ragdoll")]
+	[ScriptEvent("onZombieDamaged", "zombie, killer, *cancel, *damage, limb, *ragdoll")]
 	public class OnZombieDamaged : ScriptEvent
 	{
 		public override EventInfo EventHook(out object instance)
@@ -1208,7 +1193,7 @@ namespace uScriptEvents
 			{"BRONZE", ERagdollEffect.BRONZE},
 			{"SILVER", ERagdollEffect.SILVER},
 			{"GOLD", ERagdollEffect.GOLD},
-			{"ZERO", ERagdollEffect.ZERO_KELVIN},
+			{"ZERO_KELVIN", ERagdollEffect.ZERO_KELVIN},
 		};
 
 		[ScriptEventSubscription]
@@ -1219,7 +1204,7 @@ namespace uScriptEvents
 			{
 				killer = player;
 			}
-			var ragdoll = "NONE";
+			var ragdoll = parameters.ragdollEffect.ToString();
 
 			var args = new ExpressionValue[]
 			{
@@ -1235,14 +1220,8 @@ namespace uScriptEvents
 			shouldAllow = !args[2];
 			parameters.damage = (float)(double)args[3];
 
-			if (ragdolls.ContainsKey(args[5].ToString()))
-			{
-				parameters.ragdollEffect = ragdolls[args[5].ToString()];
-			}
-			else
-			{
-				Rocket.Core.Logging.Logger.LogWarning("uScriptExtended module from uScript => Ragdoll must be 'NONE', 'BRONZE', 'GOLD', 'SILVER', or 'ZERO'.");
-			}
+			if (ragdolls.ContainsKey(args[5].ToString())) parameters.ragdollEffect = ragdolls[args[5].ToString()];
+			else Rocket.Core.Logging.Logger.LogWarning("uScriptExtended module from uScript => Ragdoll must be 'NONE', 'BRONZE', 'GOLD', 'SILVER', or 'ZERO'.");
 		}
 	}
 	
@@ -1348,7 +1327,7 @@ namespace uScriptEvents
 		}
 
 		[ScriptEventSubscription]
-		public void OnAnimalFlee(Animal nativeAnimal, ref Vector3 direction, ref bool sendToPack, ref bool cancel)
+		public void OnAnimalFlee(Animal nativeAnimal, ref Vector3 direction, ref bool cancel)
 		{
 			var args = new ExpressionValue[]
 			{
@@ -1372,36 +1351,12 @@ namespace uScriptEvents
 		}
 
 		[ScriptEventSubscription]
-		public void OnAnimalAttacking(Animal nativeAnimal, ref Vector3 point, ref bool sendToPack, ref bool cancel)
+		public void OnAnimalAttacking(Animal nativeAnimal, ref Vector3 point, ref bool cancel)
 		{
 			var args = new ExpressionValue[]
 			{
 				ExpressionValue.CreateObject(new AnimalClass(nativeAnimal)),
 				ExpressionValue.CreateObject(new Vector3Class(point)),
-				cancel
-			};
-
-			RunEvent(this, args);
-			cancel = args[2];
-		}
-	}
-
-	[ScriptEvent("onAnimalAttackingPlayer", "animal, player, *cancel")]
-	public class OnAnimalAttackingPlayer : ScriptEvent
-	{
-		public override EventInfo EventHook(out object instance)
-		{
-			instance = null;
-			return typeof(AnimalEvents).GetEvent("OnAnimalAttackingPlayer", BindingFlags.Public | BindingFlags.Static);
-		}
-
-		[ScriptEventSubscription]
-		public void OnAnimalAttackingPlay(Animal nativeAnimal, ref Player player, ref bool sendToPack, ref bool cancel)
-		{
-			var args = new ExpressionValue[]
-			{
-				ExpressionValue.CreateObject(new AnimalClass(nativeAnimal)),
-				ExpressionValue.CreateObject(new PlayerClass(player)),
 				cancel
 			};
 

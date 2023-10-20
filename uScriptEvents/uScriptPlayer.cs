@@ -1,5 +1,7 @@
-﻿using Rocket.Unturned.Effects;
+﻿using HarmonyLib;
+using Rocket.Unturned.Effects;
 using Rocket.Unturned.Player;
+using SDG.NetTransport;
 using SDG.Unturned;
 using Steamworks;
 using System;
@@ -14,6 +16,7 @@ using uScript.API.Attributes;
 using uScript.Core;
 using uScript.Module.Main.Classes;
 using uScript.Unturned;
+using uScriptExtended;
 using static uScriptEvents.AnimalFunction;
 using static uScriptEvents.ZombieFunction;
 
@@ -25,10 +28,12 @@ namespace uScriptPlayers
 		public class PlayerSteam
 		{
 			public CSteamID Player { get; }
+			public SteamPending SteamPend { get; }
 
 			public PlayerSteam(CSteamID player)
 			{
 				this.Player = player;
+				this.SteamPend = Provider.pending.FirstOrDefault(x => x.playerID.steamID.m_SteamID == Player.m_SteamID);
 			}
 
 			[ScriptProperty(null)]
@@ -36,13 +41,11 @@ namespace uScriptPlayers
 			{
 				get
 				{
-					SteamPending steamPending = Provider.pending.FirstOrDefault(x => x.playerID.steamID.m_SteamID == Player.m_SteamID);
-					return steamPending.playerID.characterName;
+					return this.SteamPend.playerID.characterName;
 				}
 				set
 				{
-					SteamPending steamPending = Provider.pending.FirstOrDefault(x => x.playerID.steamID.m_SteamID == Player.m_SteamID);
-					steamPending.playerID.characterName = value;
+					this.SteamPend.playerID.characterName = value;
 				}
 			}
 			[ScriptProperty(null)]
@@ -50,8 +53,7 @@ namespace uScriptPlayers
 			{
 				get
 				{
-					SteamPending steamPending = Provider.pending.FirstOrDefault(x => x.playerID.steamID.m_SteamID == Player.m_SteamID);
-					return steamPending.playerID.steamID.m_SteamID.ToString();
+					return this.Player.m_SteamID.ToString();
 				}
 			}
 		}
@@ -63,14 +65,14 @@ namespace uScriptPlayers
 		[ScriptFunction("set_salvageTime")]
 		public static void setSalvageTime([ScriptInstance] ExpressionValue instance, float time)
 		{
-			if (!(instance.Data is PlayerClass player)) return;
+			if (instance.Data is not PlayerClass player) return;
 			player.Player.interact.sendSalvageTimeOverride(time);			
 		}
 
 		[ScriptFunction("arrestCustom")]
 		public static void arrestCustom([ScriptInstance] ExpressionValue instance, ushort id, ushort strength)
 		{
-			if (!(instance.Data is PlayerClass player)) return;
+			if (instance.Data is not PlayerClass player) return;
 			player.Player.equipment.dequip();
 			player.Player.animator.captorID = new CSteamID(ulong.Parse(player.Id));
 			player.Player.animator.captorItem = id;
@@ -78,67 +80,81 @@ namespace uScriptPlayers
 			player.Player.animator.sendGesture(EPlayerGesture.ARREST_START, true);
 		}
 
+		[ScriptFunction("teleportCustom")]
+		public static void teleportCustom([ScriptInstance] ExpressionValue instance, Vector3Class vector, float rotation)
+		{
+			if (instance.Data is not PlayerClass player) return;
+			player.Player.teleportToLocation(vector.Vector3, rotation);
+		}
+
+		[ScriptFunction("teleportCustom")]
+		public static void teleportCustom([ScriptInstance] ExpressionValue instance, double x, double y, double z, float rotation)
+		{
+			if (instance.Data is not PlayerClass player) return;
+			player.Player.teleportToLocation(new Vector3((float)x, (float)y, (float)z), rotation);
+		}
+
 		[ScriptFunction("get_hasEarpiece")]
 		public static bool getEarpiece([ScriptInstance] ExpressionValue instance, int number)
 		{
-			if (!(instance.Data is PlayerClass player)) return false;
+			if (instance.Data is not PlayerClass player) return false;
 			return player.Player.voice.hasEarpiece;
 		}
 
 		[ScriptFunction("get_temperature")]
 		public static string getTemperature([ScriptInstance] ExpressionValue instance)
 		{
-			if (!(instance.Data is PlayerClass player)) return null;
+			if (instance.Data is not PlayerClass player) return null;
 			return player.Player.life.temperature.ToString();
 		}
 
 		[ScriptFunction("get_stamina")]
 		public static ushort getStamina([ScriptInstance] ExpressionValue instance)
 		{ 
-			if (!(instance.Data is PlayerClass player)) return 0;
+			if (instance.Data is not PlayerClass player) return 0;
 			return player.Player.life.stamina;
 		}
 
 		[ScriptFunction("set_stamina")]
 		public static void setStamina([ScriptInstance] ExpressionValue instance, float value)
 		{
-			if (!(instance.Data is PlayerClass player)) return;
+			if (instance.Data is not PlayerClass player) return;
 			player.Player.life.serverModifyStamina(value);
 		}
 
 		[ScriptFunction("get_isSafe")]
 		public static bool getSafe([ScriptInstance] ExpressionValue instance)
 		{
-			if (!(instance.Data is PlayerClass player)) return false;
+			if (instance.Data is not PlayerClass player) return false;
 			return player.Player.movement.isSafe;
 		}
 
 		[ScriptFunction("get_isRadiated")]
 		public static bool getRadiated([ScriptInstance] ExpressionValue instance)
 		{
-			if (!(instance.Data is PlayerClass player)) return false;
+			if (instance.Data is not PlayerClass player) return false;
 			return player.Player.movement.isRadiated;
 		}
 
 		[ScriptFunction("get_isGrounded")]
 		public static bool getGrounded([ScriptInstance] ExpressionValue instance)
 		{
-			if (!(instance.Data is PlayerClass player)) return false;
+			if (instance.Data is not PlayerClass player) return false;
 			return player.Player.movement.isGrounded;
 		}
 
 		[ScriptFunction("get_oxygen")]
 		public static ushort getOxygen([ScriptInstance] ExpressionValue instance)
 		{
-			if (!(instance.Data is PlayerClass player)) return 0;
+			if (instance.Data is not PlayerClass player) return 0;
 			return player.Player.life.oxygen;
 		}
 
 		[ScriptFunction("set_oxygen")]
-		public static void setOxygen([ScriptInstance] ExpressionValue instance, float value)
+		public static void setOxygen([ScriptInstance] ExpressionValue instance, byte value)
 		{
-			if (!(instance.Data is PlayerClass player)) return;
-			ReflectionUtil.ReflectionUtil.setValue("_oxygen", (byte)value, player.Player.life);
+			if (instance.Data is not PlayerClass player) return;
+			RUtil.setValue("_oxygen", typeof(PlayerLife), player.Player.life, value);
 		}
 	}
 
@@ -148,7 +164,7 @@ namespace uScriptPlayers
 		[ScriptFunction("getAnimal")]
 		public static AnimalClass getAnimal([ScriptInstance] ExpressionValue instance)
 		{
-			if (!(instance.Data is PlayerLookClass player)) return null;
+			if (instance.Data is not PlayerLookClass player) return null;
 
 			RaycastHit hit;
 
@@ -167,7 +183,7 @@ namespace uScriptPlayers
 		[ScriptFunction("getZombie")]
 		public static ZombieClass getZombie([ScriptInstance] ExpressionValue instance)
 		{
-			if (!(instance.Data is PlayerLookClass player)) return null;
+			if (instance.Data is not PlayerLookClass player) return null;
 
 			RaycastHit hit;
 
@@ -190,7 +206,7 @@ namespace uScriptPlayers
 		[ScriptFunction("addItemAuto")]
 		public static void addItemCustom([ScriptInstance] ExpressionValue instance, ushort itemId, byte amount = 1, bool autoEquipWeapon = true, bool autoEquipUseable = true, bool autoEquipClothing = true)
 		{
-			if (!(instance.Data is PlayerInventoryClass playerInventory)) return;
+			if (instance.Data is not PlayerInventoryClass playerInventory) return;
 
 			for(int i = 0; i < amount; i++)
 			{

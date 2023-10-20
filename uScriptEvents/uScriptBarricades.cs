@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json.Linq;
-using Rocket.Unturned.Events;
+﻿using Rocket.Unturned.Events;
 using SDG.Framework.Devkit.Interactable;
 using SDG.Unturned;
 using Steamworks;
@@ -64,11 +63,15 @@ namespace uScriptBarricades
 			}
 
 			[ScriptProperty(null)]
-			public float fuel
+			public ushort fuel
 			{
 				get
 				{
 					return this.Generator.fuel;
+				}
+				set
+				{
+					this.Generator.tellFuel(value);
 				}
 			}
 		}
@@ -319,43 +322,43 @@ namespace uScriptBarricades
 		[ScriptFunction("get_generator")]
 		public static GeneratorClass getGenerator([ScriptInstance] ExpressionValue instance)
 		{
-			if (!(instance.Data is BarricadeClass barricade)) return null;
+			if (instance.Data is not BarricadeClass barricade) return null;
 			InteractableGenerator component = barricade.BarricadeTransform.GetComponent<InteractableGenerator>();
-			if (!(component != null)) return null;
+			if (component == null) return null;
 			return new GeneratorClass(component);
 		}
 
 		[ScriptFunction("get_fire")]
 		public static FireClass getFire([ScriptInstance] ExpressionValue instance)
 		{
-			if (!(instance.Data is BarricadeClass barricade)) return null;
+			if (instance.Data is not BarricadeClass barricade) return null;
 			InteractableFire component = barricade.BarricadeTransform.GetComponent<InteractableFire>();
-			if (!(component != null)) return null;
+			if (component == null) return null;
 			return new FireClass(component);
 		}
 
 		[ScriptFunction("get_oven")]
 		public static OvenClass getOven([ScriptInstance] ExpressionValue instance)
 		{
-			if (!(instance.Data is BarricadeClass barricade)) return null;
+			if (instance.Data is not BarricadeClass barricade) return null;
 			InteractableOven component = barricade.BarricadeTransform.GetComponent<InteractableOven>();
-			if (!(component != null)) return null;
+			if (component == null) return null;
 			return new OvenClass(component);
 		}
 
 		[ScriptFunction("get_farm")]
 		public static FarmClass getFarm([ScriptInstance] ExpressionValue instance)
 		{
-			if (!(instance.Data is BarricadeClass barricade)) return null;
+			if (instance.Data is not BarricadeClass barricade) return null;
 			InteractableFarm component = barricade.BarricadeTransform.GetComponent<InteractableFarm>();
-			if (!(component != null)) return null;
+			if (component == null) return null;
 			return new FarmClass(component);
 		}
 
 		[ScriptFunction("get_isWired")]
 		public static bool getIsWired([ScriptInstance] ExpressionValue instance)
 		{
-			if (!(instance.Data is BarricadeClass barricade))
+			if (instance.Data is not BarricadeClass barricade)
 				return false;
 
 			Vector3 barricadePosition = barricade.BarricadeTransform.position;
@@ -404,7 +407,7 @@ namespace uScriptBarricades
 		[ScriptFunction("get_anglex")]
 		public static float anglex([ScriptInstance] ExpressionValue instance)
 		{
-			if (!(instance.Data is BarricadeClass barricade)) return 0;
+			if (instance.Data is not BarricadeClass barricade) return 0;
 			BarricadeDrop barricadeDrop = BarricadeManager.FindBarricadeByRootTransform(barricade.BarricadeTransform);
 			return MeasurementTool.byteToAngle(barricadeDrop.GetServersideData().angle_x);
 		}
@@ -412,7 +415,7 @@ namespace uScriptBarricades
 		[ScriptFunction("get_angley")]
 		public static float angley([ScriptInstance] ExpressionValue instance)
 		{
-			if (!(instance.Data is BarricadeClass barricade)) return 0;
+			if (instance.Data is not BarricadeClass barricade) return 0;
 			BarricadeDrop barricadeDrop = BarricadeManager.FindBarricadeByRootTransform(barricade.BarricadeTransform);
 			return MeasurementTool.byteToAngle(barricadeDrop.GetServersideData().angle_y);
 		}
@@ -420,7 +423,7 @@ namespace uScriptBarricades
 		[ScriptFunction("get_anglez")]
 		public static float anglez([ScriptInstance] ExpressionValue instance)
 		{
-			if (!(instance.Data is BarricadeClass barricade)) return 0;
+			if (instance.Data is not BarricadeClass barricade) return 0;
 			BarricadeDrop barricadeDrop = BarricadeManager.FindBarricadeByRootTransform(barricade.BarricadeTransform);
 			return MeasurementTool.byteToAngle(barricadeDrop.GetServersideData().angle_z);
 		}

@@ -47,10 +47,7 @@ namespace uScriptPlayers
 		}
 
 		[ScriptFunction("clearAllAnimals")]
-		public static void clearAnimals()
-		{
-			AnimalManager.askClearAllAnimals();
-		}
+		public static void clearAnimals() => AnimalManager.askClearAllAnimals();
 
 		[ScriptFunction("getZombiesInRadius")]
 		public static ExpressionValue getZombiesInRadius(Vector3Class center, double radius)
