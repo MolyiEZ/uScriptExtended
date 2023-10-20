@@ -3,7 +3,6 @@
 ## Documentation
 
 ```
-Event: onAnimalAttackingPlayer(animal, player, *cancel)
 Event: onAnimalAttackingPoint(animal, point, *cancel)
 Event: onAnimalDamaged(animal, killer, *cancel, *damage, limb, ragdoll)
 Event: onAnimalFleeing(animal, direction, *cancel)
@@ -140,7 +139,7 @@ fire [Class]:
 generator [Class]:
     +powered               [get/set]       : boolean                   
     +wirerange             [get]           : generator
-    +fuel                  [get]           : uInt16
+    +fuel                  [get/set]       : uInt16
 
 gun [Class]:
     +ammoMax               [get]           : float
