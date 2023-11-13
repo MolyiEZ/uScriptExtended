@@ -231,7 +231,7 @@ structure [Class]:
     +isWired  		   [get]	   : boolean
 
 vehicle [Class]:
-    +enterVehicle(player)
+    +enter(player)
     +look(vector3 position)[get]               : vehicleLook
     +backward              [get] 	       : vector3
     +down                  [get] 	       : vector3
